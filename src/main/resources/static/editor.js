@@ -96,22 +96,24 @@ function speichern() {
         },
         body: payloadString
     })
-    .then( response => response.text() )
-    .then(data => {
+    .then(response => {
 
-        console.log( "Antwort vom Server: " + data );
+        if ( !response.ok ) {
 
-        if ( !data.success ) {
-
-            alert(`Fehler beim Speichern des Artikels: ${data.errorMessage}`);
-
-        } else {
-
-            alert("Artikel erfolgreich gespeichert.");
+            throw new Error( "Fehler beim Speichern des Artikels." );
         }
+
+        // im Erfolgsfall enthält der Response-Body nur die ID des neuen Artikels.
+        return response.text();
     })
-    .catch((error) => {
-        console.error('Error:', error);
+    .then( text => {
+
+        alert( "Artikel wurde gespeichert." );
+        window.location.href = "/app/artikel/" + text;
+    })
+    .catch( error => {
+
+        alert( error.message );
     });
 }
 

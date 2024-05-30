@@ -1,7 +1,7 @@
 package de.eldecker.dhbw.spring.blog.web;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +27,16 @@ public class BlogRestController {
     /** Objekt für Deserialisierung von JSON-Payload von Frontend. */
     private ObjectMapper _objectMapper = new ObjectMapper();
     
+    
+    /**
+     * REST-Endpunkt um neue Artikel (mit RichText-Editor erstellt) zu speichern.
+     * 
+     * @param jsonPayload JSON-Payload vom Frontend mit neuem Artikel.
+     * 
+     * @return Im Erfolgsfall wird HTTP-Status-Code 200 (OK) zurückgeben, der
+     *         Response-Body besteht dann nur aus der ID des (neuen) Artikels,
+     *         zu dem weitergeleitet werden soll.
+     */
     @PostMapping( "/speichern" )
     public ResponseEntity<String> artikelSpeichern( @RequestBody String jsonPayload ) {
         
@@ -42,11 +52,11 @@ public class BlogRestController {
             
             final String fehlerText = "JSON mit Artikel kann nicht deserialisiert werden. " + ex.getMessage();  
             
-            LOG.error( fehlerText, ex );
-            return new ResponseEntity<>( "Content empfangen", BAD_REQUEST ); // HTTP-Status-Code 201
+            LOG.error( fehlerText );
+            return new ResponseEntity<>( fehlerText, BAD_REQUEST ); // HTTP-Status-Code 201, Nachricht enthält ID neuer Artikel
         }
             
-        return new ResponseEntity<>( "Content empfangen", CREATED ); // HTTP-Status-Code 201 
+        return new ResponseEntity<>( "123", OK ); // HTTP-Status-Code 201 
     }
     
 }
