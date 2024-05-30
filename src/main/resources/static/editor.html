@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Blog-CMS: Editor</title>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />   
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/quill-table@1.2.2/quill_table.min.js"></script>
+</head>
+<body>
+
+  <h1>Blog-CMS: Editor</h1>
+
+  <label class="fett" for="titel">Titel des Beitrags: </label>
+  <input type="text" id="titel">
+  <br><br>
+
+  <div id="quilljs_editor">
+  </div>  
+  <br><br>
+
+  <button onclick="speichern()">Speichern</button>
+
+  <!-- JavaScript-Datei erst Laden, wenn HTML-Elemente geladen sind -->
+  <script src="editor.js"></script>
+
+</body>
