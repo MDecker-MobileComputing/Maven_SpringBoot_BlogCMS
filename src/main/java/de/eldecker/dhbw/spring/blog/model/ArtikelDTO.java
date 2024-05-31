@@ -2,9 +2,9 @@ package de.eldecker.dhbw.spring.blog.model;
 
 
 /**
- * DTO (Data Transfer Objekt) für JSON-Payload von Browser.  
+ * DTO (Data Transfer Objekt) für JSON-Payload von Browser zu Backend.
  * 
- * @param artikelID Primärschlüssel 
+ * @param artikelID Primärschlüssel; ist für neue Artikel {@code -1}
  * 
  * @param titel Titel/Überschrift des Artikels
  * 
@@ -15,5 +15,6 @@ package de.eldecker.dhbw.spring.blog.model;
 public record ArtikelDTO( int    artikelID  ,
                           String titel      ,
                           String inhaltDelta,
-                          String inhaltHTML ) {
+                          String inhaltHTML 
+                        ) {
 }
