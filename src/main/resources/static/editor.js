@@ -43,7 +43,17 @@ function holeArtikelID() {
 document.addEventListener("DOMContentLoaded", function() {
 
     quillEditor = new Quill( "#quilljs_editor", {
-        modules: {},
+        modules: {
+            toolbar: [ // leerer Array: Standard-Optionen
+                ["bold", "italic", "underline", "strike"],
+                [{ "header": 1 }, { "header": 2 }],
+                [{ "list": "ordered"}, { "list": "bullet" }],
+                [{ "script": "sub"}, { "script": "super" }],
+                [{ "color": [] }],
+                [{ "align": [] }],
+                ["clean"]
+            ]
+        },
         theme: "snow",
         placeholder: "Hier tollen Blog-Artikel verfassen..."
     });
