@@ -77,31 +77,66 @@ public class ArtikelEntity {
         return id;
     }
 
+    
+    /**
+     * Getter für Überschrift/Titel des Blog-Artikels. 
+     * 
+     * @return Überschrift des Artikels
+     */
     public String getTitel() {
         
         return titel;
     }
 
+    
+    /**
+     * Setter für Überschrift/Titel des Blog-Artikels. 
+     * 
+     * @param titel Überschrift des Artikels
+     */
     public void setTitel( String titel ) {
         
         this.titel = titel;
     }
 
+    
+    /**
+     * Getter für Inhalt im Delta-Format von quill.js.
+     * 
+     * @return Artikel im Delta-Format  (ohne Titel/Überschrift)
+     */
     public String getInhaltDelta() {
         
         return inhaltDelta;
     }
 
+    
+    /**
+     * Setter für Inhalt im Delta-Format von quill.js.
+     * 
+     * @param inhaltDelta Artikel im Delta-Format  (ohne Titel/Überschrift)
+     */
     public void setInhaltDelta( String inhaltDelta ) {
         
         this.inhaltDelta = inhaltDelta;
     }
 
+    
+    /**
+     * Getter für Inhalt im HTML-Format.
+     * 
+     * @return Artikel im HTML-Format (ohne Titel/Überschrift)
+     */
     public String getInhaltHTML() {
         
         return inhaltHTML;
     }
 
+    /**
+     * Setter für Inhalt im HTML-Format.
+     * 
+     * @param inhaltHTML Artikel im HTML-Format (ohne Titel/Überschrift)
+     */
     public void setInhaltHTML( String inhaltHTML ) {
         
         this.inhaltHTML = inhaltHTML;
