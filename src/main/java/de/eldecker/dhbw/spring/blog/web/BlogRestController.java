@@ -1,11 +1,14 @@
 package de.eldecker.dhbw.spring.blog.web;
 
+import static java.time.LocalDateTime.now;
+
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -114,7 +117,7 @@ public class BlogRestController {
      *         </ul>
      */
     @PostMapping( "/neu" )
-    public ResponseEntity<String> artikelSpeichern( @RequestBody String jsonPayload ) {
+    public ResponseEntity<String> artikelNeu( @RequestBody String jsonPayload ) {
 
         try {
 
@@ -190,10 +193,12 @@ public class BlogRestController {
             artikelEntity.setTitel(       artikelDTO.titel()       );
             artikelEntity.setInhaltDelta( artikelDTO.inhaltDelta() );
             artikelEntity.setInhaltHTML(  artikelDTO.inhaltHTML()  );
+            artikelEntity.setZeitpunktGeaendert( now()             );
             
             _artikelRepo.save( artikelEntity );
             
-            LOG.info( "Geänderter Artikel mit ID={} auf DB geschrieben.", artikelDTO.artikelID() );
+            LOG.info( "Geänderter Artikel mit ID={} auf DB geschrieben: \"{}\"", 
+                      artikelDTO.artikelID(), artikelDTO.titel() );
             
             final String forwardToPfad = "/app/artikel/" + artikelId;
             
@@ -201,7 +206,8 @@ public class BlogRestController {
         }
         catch ( JsonProcessingException ex ) {
 
-            final String fehlerText = "JSON mit geändertem Artikel kann nicht deserialisiert werden. " + ex.getMessage();
+            final String fehlerText = "JSON mit geändertem Artikel kann nicht deserialisiert werden. " + 
+                                      ex.getMessage();
             LOG.error( fehlerText );
             return new ResponseEntity<>( fehlerText, BAD_REQUEST );
         }

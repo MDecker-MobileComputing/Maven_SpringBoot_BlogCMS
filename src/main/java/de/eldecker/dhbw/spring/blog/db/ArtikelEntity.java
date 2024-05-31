@@ -51,6 +51,14 @@ public class ArtikelEntity {
     @Column( name= "ZEITPUNKT_ANGELEGT")
     private LocalDateTime zeitpunktAngelegt;
 
+    /** 
+     * Zeitpunkt (Datum+Uhrzeit), zu dem der Artikel zum letzten Mal geändert wurde;
+     * wenn der Artikel noch nie geändert wurde, dann ist der Zeitpunkt der selbe 
+     * wie für {@link #zeitpunktAngelegt}.
+     */
+    @Column( name= "ZEITPUNKT_GAENDERT")
+    private LocalDateTime zeitpunktGeaendert;
+
 
     /**
      * Default-Konstruktor, obligatorisch für JPA.
@@ -65,6 +73,10 @@ public class ArtikelEntity {
 
     /**
      * Konstruktor um Werte für drei {@code String}-Attribute zu setzen.
+     * <br><br>
+     * 
+     * Zeitpunkt für Anlegen und letzte Änderung wird auf aktuelle Systemzeit
+     * gesetzt.
      * 
      * @param titel Titel/Überschrift von Artikel
      * 
@@ -79,6 +91,7 @@ public class ArtikelEntity {
         this.inhaltHTML  = inhaltHTML;
 
         this.zeitpunktAngelegt = now();
+        this.zeitpunktGeaendert = now();
     }
 
 
@@ -181,6 +194,29 @@ public class ArtikelEntity {
         this.zeitpunktAngelegt = zeitpunktAngelegt;
     }
 
+    
+    /**
+     * Getter für Zeitpunkt, zu dem der Artikel zum letzten Mal geändert wurde.
+     * 
+     * @return Letzter Änderungszeitpunkt; gleicher Wert wie von  
+     *         {@link #getZeitpunktAngelegt()} wenn noch nie geändert.
+     */
+    public LocalDateTime getZeitpunktGeaendert() {
+        
+        return zeitpunktGeaendert;
+    }
+
+
+    /**
+     * Setter für Zeitpunkt, zu dem der Artikel zum letzten Mal geändert wurde.
+     * 
+     * @param  zeitpunktGeaendert Letzter Änderungszeitpunkt
+     */    
+    public void setZeitpunktGeaendert( LocalDateTime zeitpunktGeaendert ) {
+        
+        this.zeitpunktGeaendert = zeitpunktGeaendert;
+    }
+
 
     /**
      * Methode liefert String-Repräsentation des Objekts zurück
@@ -203,7 +239,10 @@ public class ArtikelEntity {
     @Override
     public int hashCode() {
 
-        return Objects.hash( titel, inhaltDelta, inhaltHTML, zeitpunktAngelegt );
+        return Objects.hash( titel, 
+                             inhaltDelta, inhaltHTML, 
+                             zeitpunktAngelegt, zeitpunktGeaendert 
+                           );
     }
 
     
@@ -222,10 +261,11 @@ public class ArtikelEntity {
 
         if ( obj instanceof ArtikelEntity andererArtikel ) {
 
-            return Objects.equals( titel            , andererArtikel.titel             ) &&
-                   Objects.equals( inhaltDelta      , andererArtikel.inhaltDelta       ) &&
-                   Objects.equals( inhaltHTML       , andererArtikel.inhaltHTML        ) &&
-                   Objects.equals( zeitpunktAngelegt, andererArtikel.zeitpunktAngelegt );
+            return Objects.equals( titel             , andererArtikel.titel              ) &&
+                   Objects.equals( inhaltDelta       , andererArtikel.inhaltDelta        ) &&
+                   Objects.equals( inhaltHTML        , andererArtikel.inhaltHTML         ) &&
+                   Objects.equals( zeitpunktAngelegt , andererArtikel.zeitpunktAngelegt  ) &&
+                   Objects.equals( zeitpunktGeaendert, andererArtikel.zeitpunktGeaendert );
         } else {
 
             return false;

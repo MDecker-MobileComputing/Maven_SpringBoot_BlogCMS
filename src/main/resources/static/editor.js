@@ -149,15 +149,6 @@ function speichern() {
     })
     .then( text => {
 
-        if ( artikelID == -1 ) {
-
-            alert( "Neuer Artikel wurde gespeichert." );
-
-        } else {
-
-            alert( "Änderungen an Artikel wurden gespeichert." );
-        }
-
         window.location.href = text;
     })
     .catch( error => {
