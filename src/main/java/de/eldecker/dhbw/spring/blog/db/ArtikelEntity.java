@@ -34,6 +34,12 @@ public class ArtikelEntity {
     /**
      * Artikel im Delta-Format von quilljs (falls geändert werden muss), ohne Überschrift/Titel.
      * Kann größer als 4k werden, deshalb Annotation {@code LOB} für {@code CLOB} auf Datenbank.
+     * <br><br>
+     * 
+     * Beispiel für Delta-Format:
+     * <pre>
+     * {"ops":[{"attributes":{"bold":true},"insert":"Testbeitrag (Demo-Content)"},{"insert":"\n"}]}
+     * </pre>
      */
     @Lob
     @Column( name= "INHALT_DELTA")
