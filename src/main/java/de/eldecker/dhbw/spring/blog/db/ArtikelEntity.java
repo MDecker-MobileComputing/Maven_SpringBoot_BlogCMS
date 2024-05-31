@@ -64,7 +64,13 @@ public class ArtikelEntity {
 
 
     /**
-     * Default-Konstruktor, obligatorisch für JPA.
+     * Konstruktor um Werte für drei {@code String}-Attribute zu setzen.
+     * 
+     * @param titel Titel/Überschrift von Artikel
+     * 
+     * @param inhaltDelta Inhalt (ohne Titel/Überschrift) im quill.js-eigenen Delta-Format
+     * 
+     * @param inhaltHTML Inhalt (ohne Titel/Überschrift) im HTML-Format 
      */
     public ArtikelEntity( String titel, String inhaltDelta, String inhaltHTML ) {
 

@@ -5,7 +5,7 @@ let artikelID = -1;
 
 /**
  * Hole die Artikel-ID aus der URL (URL-Parameter "artikelID").
- * 
+ *
  * @return {number} Die Artikel-ID; -1 wenn keine ID gefunden wurde.
  */
 function holeArtikelID() {
@@ -13,10 +13,10 @@ function holeArtikelID() {
     const urlParams = new URLSearchParams(window.location.search);
     const artikelIdString = urlParams.get( "artikelID" );
 
-    if ( artikelIdString === null ) { 
-    
+    if ( artikelIdString === null ) {
+
         console.error( "URL-Parameter \"artikelID\" nicht gefunden." );
-        return -1; 
+        return -1;
     }
 
     const artikelId = parseInt( artikelIdString, 10 );
@@ -27,7 +27,7 @@ function holeArtikelID() {
         return -1;
     }
 
-    return artikelId;  
+    return artikelId;
 }
 
 
@@ -38,10 +38,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     /*
     artikelID = holeArtikelID();
-    if ( artikelID === -1 ) { 
-    
+    if ( artikelID === -1 ) {
+
         alert( "FEHLER: Seite wurde ohne Artikel-ID aufgerufen." );
-        return; 
+        return;
     }
     console.log( "Artikel-ID gefunden: " + artikelID );
     */
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function() {
         theme: "snow",
         placeholder: "Hier tollen Blog-Artikel schreiben..."
     });
-  
+
   console.log( "QuillJS-Editor initialisiert." );
 });
 
@@ -78,7 +78,7 @@ function speichern() {
     console.log( "Delta-String von quilljs: " + deltaString );
 
     const htmlContent = quillEditor.root.innerHTML;
-    console.log( "HTML-String von quilljs: " + htmlContent );    
+    console.log( "HTML-String von quilljs: " + htmlContent );
 
     const payloadObjekt = {
         artikelID  : artikelID,
@@ -103,13 +103,13 @@ function speichern() {
             throw new Error( "Fehler beim Speichern des Artikels." );
         }
 
-        // im Erfolgsfall enthält der Response-Body nur die ID des neuen Artikels.
+        // im Erfolgsfall enthält der Response-Body nur den Pfad des neuen Artikels
         return response.text();
     })
     .then( text => {
 
         alert( "Artikel wurde gespeichert." );
-        window.location.href = "/app/artikel/" + text;
+        window.location.href = text;
     })
     .catch( error => {
 

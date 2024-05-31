@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="'Blog-Artikel: ' + ${artikel.getTitel()}"></title>
+    <title>Blog-CMS: Fehler aufgetreten</title>
     <meta charset="utf-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="../../styles.css">
 </head>
 <body>
 
-    <h1 th:text="'Artikel: ' + ${artikel.getTitel()}"></h1>
+    <h1>Es ist ein Fehler aufgetreten</h1>
 
-    <div class="rahmen" th:utext="${artikel.getInhaltHTML()}"></div>
+    <p>
+        <span class="fett">Fehlermeldung: </span>
+        <span th:text="${fehlertext}"></span>
+    </p>
 
 </body>
 </html>

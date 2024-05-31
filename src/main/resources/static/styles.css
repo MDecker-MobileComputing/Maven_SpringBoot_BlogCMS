@@ -43,3 +43,8 @@ textarea {
         width: 50%;
     }
 }
+
+.rahmen {
+    border: 1px solid black;
+    padding: 1em;
+}
