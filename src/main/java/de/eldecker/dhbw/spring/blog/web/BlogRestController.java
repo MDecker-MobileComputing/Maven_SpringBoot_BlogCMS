@@ -8,7 +8,6 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.slf4j.Logger;

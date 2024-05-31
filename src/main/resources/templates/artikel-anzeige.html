@@ -11,6 +11,22 @@
     <h1 th:text="'Artikel: ' + ${artikel.getTitel()}"></h1>
 
     <div class="rahmen" th:utext="${artikel.getInhaltHTML()}"></div>
+    <br><br>
+
+    <p>
+        <span class="fett">Artikel angelegt: </span>
+        <span th:text="${#temporals.format(artikel.getZeitpunktAngelegt(), 'dd. MMMM yyyy, HH:mm')} + ' Uhr'"></span>
+    </p>
+    <p>
+        <span class="fett">Artikel geändert: </span>
+        <span th:if="${artikel.getZeitpunktGeaendert().isEqual(artikel.getZeitpunktAngelegt())}">
+            Artikel wurde nicht geändert.
+        </span>
+        <span th:unless="${artikel.getZeitpunktGeaendert().isEqual(artikel.getZeitpunktAngelegt())}"
+              th:text="${#temporals.format(artikel.getZeitpunktGeaendert(), 'dd. MMMM yyyy, HH:mm')} + ' Uhr'" >
+        </span>
+        <span ></span>
+    </p>
 
 </body>
 </html>
