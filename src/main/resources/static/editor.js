@@ -22,7 +22,7 @@ function holeArtikelID() {
 
     if ( artikelIdString === null ) {
 
-        console.error( "URL-Parameter \"artikelID\" nicht gefunden." );
+        console.log( "URL-Parameter \"artikelID\" nicht gefunden." );
         return -1;
     }
 
