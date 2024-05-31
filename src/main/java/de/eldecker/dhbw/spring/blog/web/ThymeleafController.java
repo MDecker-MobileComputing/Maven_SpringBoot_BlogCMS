@@ -1,5 +1,6 @@
 package de.eldecker.dhbw.spring.blog.web;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -79,6 +80,24 @@ public class ThymeleafController {
         model.addAttribute( "artikel", artikelEntity );
         
         return "artikel-anzeige";
+    }
+    
+    
+    /**
+     * Seite mit Liste der Blog-Artikel anzeigen
+     *  
+     * @param model Objekt für Platzhalterwerte in Template
+     * 
+     * @return Name der Template-Datei "artikel-liste.html" ohne Datei-Endung
+     */
+    @GetMapping( "/artikel/liste" )
+    public String artikelListe( Model model ) {
+       
+        final List<ArtikelEntity> artikelListe = _artikelRepo.findAllByOrderByZeitpunktAngelegtDesc();
+        
+        model.addAttribute( "artikel_liste", artikelListe );
+        
+        return "artikel-liste";
     }
     
 }

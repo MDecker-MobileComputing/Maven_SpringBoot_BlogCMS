@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Liste aller Blog-Artikel</title>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../styles.css">
+</head>
+<body>
+
+    <h1 th:text="'Liste aller Artikel (' + ${#lists.size(artikel_liste)} + ')'"></h1>
+
+    <p th:each="artikel : ${artikel_liste}">
+        <a th:href="'/app/artikel/' + ${artikel.getId()}" th:text="${artikel.getTitel()}"></a>
+        <span class="klein" th:text="' (' + ${#temporals.format(artikel.getZeitpunktAngelegt(), 'dd. MMMM yyyy, HH:mm')} + ' Uhr)'" ></span>
+    </p>
+
+</body>
+</html>
