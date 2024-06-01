@@ -26,7 +26,7 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
     private final ArtikelRepo _artikelRepo;
     
     /** Repo für Zugriff auf Tabelle mit Autoren. */
-    private final AutorenRepo _autorRepo;
+    private final AutorenRepo _autorRepo;    
     
     
     /**
@@ -56,8 +56,9 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
                       anzahlAlt );            
         } else {
             
-            final AutorEntity autor1 = new AutorEntity( "alice", "g3h3im" );
-            final AutorEntity autor2 = new AutorEntity( "bob"  , "s3cr3t" );
+            // Bcrypt-Values generated with: https://bcrypt.online/
+            final AutorEntity autor1 = new AutorEntity( "alice", "$2y$10$BjJB8WCzdmlm0E8RlltwtOP3eQSh7Ikonln0zjV2tLLkmH8de4y16" ); // "g3h3im"
+            final AutorEntity autor2 = new AutorEntity( "bob"  , "$2y$10$plpdk9XDdTTil6oRZxrQheOLB1PU7OV4w4J.h5mbF6zHyOJLkBRjO" ); // "s3cr3t"
             
             final List<AutorEntity> autorenListe = List.of( autor1, autor2 );
             _autorRepo.saveAll( autorenListe );

@@ -1,7 +1,5 @@
 package de.eldecker.dhbw.spring.blog.sicherheit;
 
-import static org.springframework.security.crypto.factory.PasswordEncoderFactories.createDelegatingPasswordEncoder;
-
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import de.eldecker.dhbw.spring.blog.db.AutorEntity;
@@ -24,10 +21,7 @@ import de.eldecker.dhbw.spring.blog.db.AutorenRepo;
 public class MeinUserDetailsService implements UserDetailsService {
 
     public static final String ROLLE_AUTOR = "autor";
-    
-    /** Objekt für Kodierung Passwort. */
-    private final PasswordEncoder _passwordEncoder = createDelegatingPasswordEncoder();
-    
+
     /** Repo-Bean für Zugriff auf Datenbanktabelle mit Autoren. */
     private AutorenRepo _autorRepo;
     
@@ -68,10 +62,8 @@ public class MeinUserDetailsService implements UserDetailsService {
             
             final String passwort = autorEntity.getPasswort();
             
-            final String passwortEncoded = _passwordEncoder.encode( passwort );
-
             final UserDetails userDetails = User.withUsername( nutzername )
-                                                .password( passwortEncoded )
+                                                .password( "{bcrypt}" + passwort )
                                                 .roles( ROLLE_AUTOR )
                                                 .build();            
             return userDetails;

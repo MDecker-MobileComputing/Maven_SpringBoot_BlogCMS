@@ -31,7 +31,12 @@ public class AutorEntity {
     /** Nutzername des Autors. */
     private String name;
     
-    /** Passwort des Autors. */
+    /** 
+     * Passwort des Autors (bcrypted).
+     * <br><br>
+     * 
+     * <a href="https://en.wikipedia.org/wiki/Bcrypt#Description">Erklärung bcrypt-Algo auf engl. Wikipedia</a> 
+     */
     private String passwort;
     
     /** 
@@ -104,7 +109,7 @@ public class AutorEntity {
     /**
      * Getter für Passwort.
      * 
-     * @return Passwort
+     * @return Passwort (bcrypted)
      */
     public String getPasswort() {
         
@@ -115,7 +120,7 @@ public class AutorEntity {
     /**
      * Setter für Passwort.
      * 
-     * @param passwort Passwort
+     * @param passwort Passwort (bcrypted)
      */
     public void setPasswort( String passwort ) {
         
@@ -139,7 +144,7 @@ public class AutorEntity {
      * String-Repräsentation des Autors.
      * 
      * @return String mit Begriff "Autor" und Nutzername; 
-     *         Passwort darf nicht enthalten sein!
+     *         Passwort darf nicht enthalten sein (auch wenn es bcrypted ist).
      */
     @Override
     public String toString() {
