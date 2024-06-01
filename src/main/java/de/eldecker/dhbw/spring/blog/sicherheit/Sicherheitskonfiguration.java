@@ -12,17 +12,19 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Konfiguration von Web-Security: auf bestimmte Pfad soll man nur nach Authentifizierung
- * zugreifen dürfen.
+ * zugreifen dürfen. Artikel lesen dürfen anonyme Nutzer, aber nur angemeldete Nutzer (Autoren)
+ * dürfen Artikel anlegen und ändern.
  */
 @Configuration
 @EnableWebSecurity
 public class Sicherheitskonfiguration {
 
     /** Array mit Pfaden, auf die auch ohne Authentifizierung zugegriffen werden kann. */
-    private final static String[] OEFFENTLICHE_PFADE_ARRAY = { "/index.html"     ,
-                                                               "/styles.css"     ,
-                                                               "/h2-console/**"  ,
-                                                               "/app/**"
+    private final static String[] OEFFENTLICHE_PFADE_ARRAY = { "/index.html"           ,
+                                                               "/styles.css"           ,
+                                                               "/h2-console/**"        ,
+                                                               "/app/**"               ,
+                                                               "/autor-abgemeldet.html"
                                                              };
     
     /**
@@ -45,6 +47,7 @@ public class Sicherheitskonfiguration {
                    .formLogin( formLogin -> formLogin.defaultSuccessUrl( "/app/artikel/liste", true ) ) // true=alwaysUse 
                    .logout(logout -> logout
                            .logoutUrl( "/abmelden" )
+                           .logoutSuccessUrl("/autor-abgemeldet.html")
                            .invalidateHttpSession( true )
                            .deleteCookies( "JSESSIONID" )
                           )
