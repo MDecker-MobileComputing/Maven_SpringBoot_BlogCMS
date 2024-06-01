@@ -79,10 +79,11 @@ public class BlogRestController {
      *         <ul>
      *         <li>200 (OK): Erfolg, Body enthält JSON mit Titel und Artikel im Delta-Format.</li>
      *         <li>401 (Unauthorized): Nutzer ist nicht angemeldet.</li>
+     *         <li>403 (Forbidden): Angemeldeter Nutzer ist nicht Autor des Artikels.</i>
      *         <li>404 (Not Found): Kein Artikel mit {@code artikelId} gefunden.</li>
      *         <li>500 (Internal Server Error): Internes Problem bei JSON-Erstellung.</li>
      *         </ul>
-     *         Bei den Fehler-Coedes (4xx und 5xx) enthält der Body einen String (kein JSON) mit
+     *         Bei den Fehler-Codes (4xx und 5xx) enthält der Body einen String (kein JSON) mit
      *         einer kurzen Fehlerbeschreibung.
      */
     @GetMapping( "/holen/{artikelID}" )
@@ -95,6 +96,7 @@ public class BlogRestController {
             LOG.error( fehlerText );
             return new ResponseEntity<>( fehlerText, UNAUTHORIZED );            
         }                
+        final String nameAutor = authentication.getName();
         
         final Optional<ArtikelEntity> artikelOptional = _artikelRepo.findById( artikelID );
         if ( artikelOptional.isEmpty() ) {
@@ -105,6 +107,13 @@ public class BlogRestController {
         }
 
         final ArtikelEntity artikelEntity = artikelOptional.get();
+        
+        if ( artikelEntity.getAutor().getName().equals( nameAutor ) == false ) {
+            
+            final String fehlerText = "Angemeldeter Nutzer ist nicht der Autor des Artikels.";
+            LOG.error( fehlerText );
+            return new ResponseEntity<>( fehlerText, UNAUTHORIZED );              
+        }
 
         final TitelUndDeltaInhaltDTO dto =
                 new TitelUndDeltaInhaltDTO( artikelEntity.getTitel(),
@@ -213,6 +222,7 @@ public class BlogRestController {
      *         In allen Fällen enthält die Payload eine Fehlermeldung.
      *         </li>
      *         <li>401 (Unauthorized): Nutzer nicht angemeldet</li>
+     *         <li>403 (Forbidden): Angemeldeter Nutzer ist nicht berechtigt, den Artikel zu ändern.</li>
      *         </ul>
      */
     @PostMapping( "/aendern" )
@@ -225,6 +235,7 @@ public class BlogRestController {
             LOG.error( fehlerText );
             return new ResponseEntity<>( fehlerText, UNAUTHORIZED );            
         }        
+        final String nameAutor = authentication.getName();
         
         try {
                         
@@ -244,6 +255,13 @@ public class BlogRestController {
             }
             
             final ArtikelEntity artikelEntity = artikelOptional.get();
+            
+            if ( artikelEntity.getAutor().getName().equals( nameAutor ) == false ) {
+                
+                final String fehlerText = "Angemeldeter Nutzer ist nicht der Autor des Artikels.";
+                LOG.error( fehlerText );
+                return new ResponseEntity<>( fehlerText, UNAUTHORIZED );              
+            }            
             
             artikelEntity.setTitel(       artikelDTO.titel()       );
             artikelEntity.setInhaltDelta( artikelDTO.inhaltDelta() );

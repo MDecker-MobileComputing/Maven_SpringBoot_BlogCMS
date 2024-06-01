@@ -32,9 +32,14 @@
               th:text="${#temporals.format(artikel.getZeitpunktGeaendert(), 'dd. MMMM yyyy, HH:mm')} + ' Uhr'" >
         </span>        
     </p>
-    <br><br>
+    <br>
 
-    <a href="/app/artikel/liste"   target="_blank" >Liste aller Artikel</a></li>
+    <p th:if="${angemeldetAls != null and angemeldetAls == artikel.getAutor().getName()}">
+        <a th:href="'/editor.html?artikelID=' + ${artikel.getId()}" >Artikel bearbeiten</a>
+        <br><br>
+    </p>
+
+    <a href="/app/artikel/liste" target="_blank" >Liste aller Artikel</a></li>
 
 </body>
 </html>
