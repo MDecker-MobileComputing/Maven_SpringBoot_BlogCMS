@@ -1,8 +1,11 @@
 package de.eldecker.dhbw.spring.blog.db;
 
-import static java.time.LocalDateTime.now;
-
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.AUTO;
+
+import static java.time.LocalDateTime.now;
+import static java.lang.String.format;
+
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -11,7 +14,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 
@@ -64,6 +69,16 @@ public class ArtikelEntity {
      */
     @Column( name= "ZEITPUNKT_GAENDERT" )
     private LocalDateTime zeitpunktGeaendert;
+    
+    /**
+     * Autor, der den Blog-Artikel angelegt hat und ihn ändern darf
+     * (ein Autor darf nur die von ihm angelegten Artikel ändern). 
+     * Die Autoren-Entity ist der "Owner" dieser Assoziation, da in ihrer
+     * Tabelle es eine Spalte für das Fremdschlüsselattribut gibt. 
+     */
+    @ManyToOne( fetch = EAGER )
+    @JoinColumn( name = "autor__fk", referencedColumnName = "id" )
+    private AutorEntity autor;    
 
 
     /**
@@ -74,6 +89,8 @@ public class ArtikelEntity {
         titel       = "";
         inhaltDelta = "";
         inhaltHTML  = "";
+        
+        autor = null;
     }
 
 
@@ -96,8 +113,32 @@ public class ArtikelEntity {
         this.inhaltDelta = inhaltDelta;
         this.inhaltHTML  = inhaltHTML;
 
-        this.zeitpunktAngelegt = now();
+        this.zeitpunktAngelegt  = now();
         this.zeitpunktGeaendert = now();
+        
+        autor = null;
+    }
+    
+    /**
+     * Konstruktor um Werte für die drei String-Attribute und den Autor zu setzen.
+     * <br><br>
+     * 
+     * Zeitpunkt für Anlegen und letzte Änderung wird auf aktuelle Systemzeit
+     * gesetzt. 
+     * 
+     * @param titel Titel/Überschrift von Artikel
+     * 
+     * @param inhaltDelta Inhalt (ohne Titel/Überschrift) im quill.js-eigenen Delta-Format
+     * 
+     * @param inhaltHTML Inhalt (ohne Titel/Überschrift) im HTML-Format 
+     * 
+     * @param autor Autor, der den Artikel geschrieben hat
+     */
+    public ArtikelEntity( String titel, String inhaltDelta, String inhaltHTML, AutorEntity autor ) {
+       
+        this ( titel, inhaltDelta, inhaltHTML );
+        
+        this.autor = autor;
     }
 
 
@@ -222,17 +263,42 @@ public class ArtikelEntity {
         
         this.zeitpunktGeaendert = zeitpunktGeaendert;
     }
+        
+    
+    /**
+     * Getter für Autor des Artikels.
+     * 
+     * @return Autor, der Artikel geschrieben und evtl. auch geändert hat.
+     */
+    public AutorEntity getAutor() {
+        
+        return autor;
+    }
+
+    
+    /**
+     * Setter für Autor des Artikels.
+     * 
+     * @param autor Autor, der Artikel geschrieben und evtl. auch geändert hat.
+     */
+    public void setAutor( AutorEntity autor ) {
+        
+        this.autor = autor;
+    }
 
 
     /**
      * Methode liefert String-Repräsentation des Objekts zurück
      *
-     * @return String mit ID + Titel, aber ohne eigentlichen Inhalt (wäre zu lang)
+     * @return String mit ID + Autor + Titel, aber ohne eigentlichen Inhalt
      */
     @Override
     public String toString() {
+        
+        final String str = format( "Artikel mit ID=%d von Autor %s: \"%s\"", 
+                                   id, autor, titel );
 
-        return "Artikel mit ID=" + id + ": " + titel;
+        return str;
     }
 
 
@@ -247,7 +313,8 @@ public class ArtikelEntity {
 
         return Objects.hash( titel, 
                              inhaltDelta, inhaltHTML, 
-                             zeitpunktAngelegt, zeitpunktGeaendert 
+                             zeitpunktAngelegt, zeitpunktGeaendert,
+                             autor
                            );
     }
 
@@ -271,7 +338,8 @@ public class ArtikelEntity {
                    Objects.equals( inhaltDelta       , andererArtikel.inhaltDelta        ) &&
                    Objects.equals( inhaltHTML        , andererArtikel.inhaltHTML         ) &&
                    Objects.equals( zeitpunktAngelegt , andererArtikel.zeitpunktAngelegt  ) &&
-                   Objects.equals( zeitpunktGeaendert, andererArtikel.zeitpunktGeaendert );
+                   Objects.equals( zeitpunktGeaendert, andererArtikel.zeitpunktGeaendert ) &&
+                   Objects.equals( autor             , andererArtikel.autor              );
         } else {
 
             return false;

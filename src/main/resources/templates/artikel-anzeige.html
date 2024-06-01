@@ -8,11 +8,17 @@
 </head>
 <body>
 
-    <h1 th:text="'Artikel: ' + ${artikel.getTitel()}"></h1>
+    <div th:replace="FragmentAnmeldeInfo :: loginInfo(${angemeldetAls})"></div>
+
+    <h1 th:text="'Artikel: ' + ${artikel.getTitel()}"></h1>    
 
     <div class="rahmen" th:utext="${artikel.getInhaltHTML()}"></div>
     <br><br>
-
+    
+    <p>
+        <span class="fett">Autor: </span>
+        <span th:text="${artikel.getAutor().getName()}"></span>
+    </p>
     <p>
         <span class="fett">Artikel angelegt: </span>
         <span th:text="${#temporals.format(artikel.getZeitpunktAngelegt(), 'dd. MMMM yyyy, HH:mm')} + ' Uhr'"></span>
@@ -24,8 +30,7 @@
         </span>
         <span th:unless="${artikel.getZeitpunktGeaendert().isEqual(artikel.getZeitpunktAngelegt())}"
               th:text="${#temporals.format(artikel.getZeitpunktGeaendert(), 'dd. MMMM yyyy, HH:mm')} + ' Uhr'" >
-        </span>
-        <span ></span>
+        </span>        
     </p>
     <br><br>
 

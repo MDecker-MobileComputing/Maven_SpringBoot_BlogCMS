@@ -1,0 +1,6 @@
+<!-- FragmentLogin.html -->
+<p th:fragment="loginInfo (angemeldetAls)" th:if="${angemeldetAls != null}">
+    Angemeldet als Autor
+    <span th:text="${angemeldetAls}"></span>
+    ( <a href="/abmelden">Abmelden</a> )
+</p>

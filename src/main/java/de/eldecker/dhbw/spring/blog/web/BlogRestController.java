@@ -4,9 +4,11 @@ import static java.time.LocalDateTime.now;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import java.util.Optional;
 
@@ -14,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,9 +29,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.eldecker.dhbw.spring.blog.db.ArtikelEntity;
 import de.eldecker.dhbw.spring.blog.db.ArtikelRepo;
+import de.eldecker.dhbw.spring.blog.db.AutorEntity;
+import de.eldecker.dhbw.spring.blog.db.AutorenRepo;
 import de.eldecker.dhbw.spring.blog.model.ArtikelDTO;
 import de.eldecker.dhbw.spring.blog.model.TitelUndDeltaInhaltDTO;
-
 
 
 /**
@@ -45,6 +49,9 @@ public class BlogRestController {
 
     /** Repo-Bean für Zugriff auf Tabelle mit Artikeln. */
     private final ArtikelRepo _artikelRepo;
+    
+    /** Repo-Bean für Zugriff auf Tabelle mit Autoren. */
+    private final AutorenRepo _autorenRepo; 
 
 
     /**
@@ -52,9 +59,11 @@ public class BlogRestController {
      */
     @Autowired
     public BlogRestController( ArtikelRepo artikelRepo,
+                               AutorenRepo autorenRepo,
                                ObjectMapper objectMapper ) {
 
         _artikelRepo  = artikelRepo;
+        _autorenRepo  = autorenRepo;
         _objectMapper = objectMapper;
     }
 
@@ -64,9 +73,12 @@ public class BlogRestController {
      *
      * @param artikelID ID des Artikels
      *
+     * @param authentication Objekt, um Authentifzierung abzufragen
+     *
      * @return Mögliche HTTP-Status-Codes:
      *         <ul>
      *         <li>200 (OK): Erfolg, Body enthält JSON mit Titel und Artikel im Delta-Format.</li>
+     *         <li>401 (Unauthorized): Nutzer ist nicht angemeldet.</li>
      *         <li>404 (Not Found): Kein Artikel mit {@code artikelId} gefunden.</li>
      *         <li>500 (Internal Server Error): Internes Problem bei JSON-Erstellung.</li>
      *         </ul>
@@ -74,8 +86,16 @@ public class BlogRestController {
      *         einer kurzen Fehlerbeschreibung.
      */
     @GetMapping( "/holen/{artikelID}" )
-    public ResponseEntity<String> artikelHolen( @PathVariable("artikelID") long artikelID ) {
-
+    public ResponseEntity<String> artikelHolen( @PathVariable("artikelID") long artikelID,
+                                                Authentication authentication ) {                                                 
+        
+        if ( authentication == null || authentication.isAuthenticated() == false ) {
+            
+            final String fehlerText = "Unangemeldeter Nutzer kann Artikel nicht für Änderung abrufen.";
+            LOG.error( fehlerText );
+            return new ResponseEntity<>( fehlerText, UNAUTHORIZED );            
+        }                
+        
         final Optional<ArtikelEntity> artikelOptional = _artikelRepo.findById( artikelID );
         if ( artikelOptional.isEmpty() ) {
 
@@ -107,17 +127,39 @@ public class BlogRestController {
     /**
      * REST-Endpunkt um neuen Artikel zu speichern.
      *
-     * @param jsonPayload JSON-Payload vom Frontend mit neuem Artikel.
+     * @param jsonPayload JSON-Payload vom Frontend mit neuem Artikel
+     * 
+     * @param authentication Objekt, um Authentifzierung abzufragen 
      *
      * @return Mögliche HTTP-Status-Codes:
      *         <ul>
-     *         <li>201 (Created): Erfolg, Body enthält Pfad, an dem der neue Artikel zu finden ist.</li>
-     *         <li>400 (Bad Request): JSON-Payload konnte nicht deserialisert werden; Body enthält Fehlermeldung.</li>
+     *         <li>201 (Created)     : Erfolg, Body enthält Pfad, an dem der neue Artikel zu finden ist.</li>
+     *         <li>400 (Bad Request) : JSON-Payload konnte nicht deserialisert werden; Body enthält Fehlermeldung.</li>
+     *         <li>401 (Unauthorized): Nutzer ist nicht angemeldet.</i>
+     *         <li>403 (Forbidden)   : Nutzer ist angemeldet, aber wurde nicht in DB gefunden (kann eigentlich nicht sein).</li> 
      *         </ul>
      */
     @PostMapping( "/neu" )
-    public ResponseEntity<String> artikelNeu( @RequestBody String jsonPayload ) {
+    public ResponseEntity<String> artikelNeu( @RequestBody String jsonPayload,
+                                              Authentication authentication ) {
 
+        if ( authentication == null || authentication.isAuthenticated() == false ) {
+            
+            final String fehlerText = "Unangemeldeter Nutzer kann nicht neuen Artikel anlegen.";
+            LOG.error( fehlerText );
+            return new ResponseEntity<>( fehlerText, UNAUTHORIZED );            
+        }
+        
+        final String anmeldeName = authentication.getName(); 
+        final Optional<AutorEntity> autorOptional = _autorenRepo.findByName( anmeldeName );
+        if ( autorOptional.isEmpty() ) {
+            
+            final String fehlerText = "Nutzer angemeldet, aber nicht in DB gefunden.";
+            LOG.error( fehlerText );
+            return new ResponseEntity<>( fehlerText, FORBIDDEN );            
+        }
+        final AutorEntity autorEntity = autorOptional.get();
+        
         try {
 
             final ArtikelDTO artikel = _objectMapper.readValue( jsonPayload, ArtikelDTO.class );
@@ -128,14 +170,15 @@ public class BlogRestController {
 
                 return new ResponseEntity<>( "Titel von Artikel ist leer", BAD_REQUEST );
             }
-
+            
             ArtikelEntity artikelEntity = new ArtikelEntity( artikel.titel().trim(),
-                                                             artikel.inhaltDelta(),
-                                                             artikel.inhaltHTML() );
+                                                             artikel.inhaltDelta() ,
+                                                             artikel.inhaltHTML()  ,
+                                                             autorEntity );
             artikelEntity = _artikelRepo.save( artikelEntity );
 
-            LOG.info( "Neuen Artikel mit Titel \"{}\" unter ID={} gespeichert.",
-                      artikelEntity.getTitel(), artikelEntity.getId() );
+            LOG.info( "Neuen Artikel mit Titel \"{}\" von \"{}\" unter ID={} gespeichert.",
+                      artikelEntity.getTitel(), anmeldeName, artikelEntity.getId() );
 
             final String forwardToPfad = "/app/artikel/" + artikelEntity.getId();
             
@@ -143,16 +186,20 @@ public class BlogRestController {
         }
         catch ( JsonProcessingException ex ) {
 
-            final String fehlerText = "JSON mit neuen Artikel kann nicht deserialisiert werden. " + ex.getMessage();
+            final String fehlerText = "JSON mit neuen Artikel kann nicht deserialisiert werden. " + 
+                                      ex.getMessage();
             LOG.error( fehlerText );
             return new ResponseEntity<>( fehlerText, BAD_REQUEST );
         }
     }
     
+    
     /**
      * REST-Endpunkt um geänderten Artikel zu speichern.
      *
      * @param jsonPayload JSON-Payload vom Frontend mit neuem Artikel.
+     * 
+     * @param authentication Objekt, um Authentifzierung abzufragen
      *
      * @return Mögliche HTTP-Status-Codes:
      *         <ul>
@@ -164,11 +211,20 @@ public class BlogRestController {
      *         <li>Artikel mit ID aus Payload nicht gefunden</li>         
      *         </ul>
      *         In allen Fällen enthält die Payload eine Fehlermeldung.
-     *         </li>         
+     *         </li>
+     *         <li>401 (Unauthorized): Nutzer nicht angemeldet</li>
      *         </ul>
      */
     @PostMapping( "/aendern" )
-    public ResponseEntity<String> artikelAendern( @RequestBody String jsonPayload ) {    
+    public ResponseEntity<String> artikelAendern( @RequestBody String jsonPayload,
+                                                  Authentication authentication) {    
+        
+        if ( authentication == null || authentication.isAuthenticated() == false ) {
+            
+            final String fehlerText = "Unangemeldeter Nutzer kann Artikel nicht ändern.";
+            LOG.error( fehlerText );
+            return new ResponseEntity<>( fehlerText, UNAUTHORIZED );            
+        }        
         
         try {
                         

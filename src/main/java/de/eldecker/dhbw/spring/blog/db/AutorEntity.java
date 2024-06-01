@@ -1,12 +1,16 @@
 package de.eldecker.dhbw.spring.blog.db;
 
 import static jakarta.persistence.GenerationType.AUTO;
+import static java.lang.String.format;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
@@ -29,6 +33,14 @@ public class AutorEntity {
     
     /** Passwort des Autors. */
     private String passwort;
+    
+    /** 
+     * Liste der Artikel, die der Autor geschrieben hat.
+     * Der Owner dieser Assoziation ist {@link ArtikelEntity}, siehe
+     * Attribut {@code autor} in dieser Klasse.
+     */
+    @OneToMany( mappedBy = "autor" )
+    private List<ArtikelEntity> artikel = new ArrayList<>( 10 ); 
     
     
     /** 
@@ -109,6 +121,18 @@ public class AutorEntity {
         
         this.passwort = passwort;
     }
+    
+    
+    /**
+     * Getter für Liste der Artikel, die der Autor geschrieben hat
+     * und deshalb auch ändern darf.
+     * 
+     * @return Liste der Artikel von Autor
+     */
+    public List<ArtikelEntity> getArtikel() {
+    
+        return artikel;
+    }
 
     
     /**
@@ -120,7 +144,9 @@ public class AutorEntity {
     @Override
     public String toString() {
         
-        return "Autor \"" + name + "\""; 
+        final String str = format( "Autor \"%s\", hat %d Artikel geschrieben.", 
+                                   name, artikel.size() );        
+        return str; 
     }
     
     
@@ -137,7 +163,7 @@ public class AutorEntity {
     @Override
     public int hashCode() {
 
-        return Objects.hash( name, passwort );
+        return Objects.hash( name, passwort, artikel );
     }
     
     
@@ -157,7 +183,8 @@ public class AutorEntity {
         if ( obj instanceof AutorEntity andererAutor ) {
 
             return Objects.equals( name    , andererAutor.name     ) && 
-                   Objects.equals( passwort, andererAutor.passwort );
+                   Objects.equals( passwort, andererAutor.passwort ) &&
+                   Objects.equals( artikel , andererAutor.artikel  );
             
         } else {
             

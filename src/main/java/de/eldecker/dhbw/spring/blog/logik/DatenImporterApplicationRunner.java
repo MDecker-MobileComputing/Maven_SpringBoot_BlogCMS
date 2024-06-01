@@ -1,5 +1,7 @@
 package de.eldecker.dhbw.spring.blog.logik;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import de.eldecker.dhbw.spring.blog.db.ArtikelEntity;
 import de.eldecker.dhbw.spring.blog.db.ArtikelRepo;
+import de.eldecker.dhbw.spring.blog.db.AutorEntity;
+import de.eldecker.dhbw.spring.blog.db.AutorenRepo;
 
 /**
  * Bean um bei Bedarf Demo-Content unmittelbar nach Start der Anwendung zu importieren.
@@ -21,14 +25,19 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
     /** Repo für Zugriff auf Tabelle mit Blog-Artikeln. */
     private final ArtikelRepo _artikelRepo;
     
+    /** Repo für Zugriff auf Tabelle mit Autoren. */
+    private final AutorenRepo _autorRepo;
+    
     
     /**
      * Konstruktor für <i>Dependency Injection</i>.
      */
     @Autowired
-    public DatenImporterApplicationRunner( ArtikelRepo artikelRepo ) {
+    public DatenImporterApplicationRunner( ArtikelRepo artikelRepo,
+                                           AutorenRepo autorRepo ) {
         
         _artikelRepo = artikelRepo;
+        _autorRepo   = autorRepo;
     }
     
     
@@ -43,18 +52,34 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
         final long anzahlAlt = _artikelRepo.count();
         if ( anzahlAlt > 0 ) {
             
-            LOG.info( "Es sind schon {} Artikel in der Datenbank, deshalb wird kein Demo-Content importiert." );
-            
+            LOG.info( "Es sind schon {} Artikel in der Datenbank, deshalb wird kein Demo-Content importiert.", 
+                      anzahlAlt );            
         } else {
+            
+            final AutorEntity autor1 = new AutorEntity( "alice", "g3h3im" );
+            final AutorEntity autor2 = new AutorEntity( "bob"  , "s3cr3t" );
+            
+            final List<AutorEntity> autorenListe = List.of( autor1, autor2 );
+            _autorRepo.saveAll( autorenListe );
+            
             
             LOG.info( "Keine Artikel in Datenbank, importiere Demo-Content." );
             
             final ArtikelEntity artikel1 = 
-                    new ArtikelEntity( "Test-Beitrag (automatisch erzeugt)", 
+                    new ArtikelEntity( "Test-Beitrag 1 (automatisch erzeugt)", 
                                        "{\"ops\":[{\"attributes\":{\"bold\":true},\"insert\":\"Testbeitrag (Demo-Content)\"},{\"insert\":\"\\n\"}]}", 
-                                       "<p>Testbeitrag (Demo-Content)</p>");                                         
-            
-            _artikelRepo.save( artikel1 );            
+                                       "<p>Testbeitrag (Demo-Content)</p>",
+                                       autor1
+                                     );                                         
+
+            final ArtikelEntity artikel2 = 
+                    new ArtikelEntity( "Test-Beitrag 2 (automatisch erzeugt)", 
+                                       "{\"ops\":[{\"attributes\":{\"bold\":true},\"insert\":\"Noch ein Testbeitrag (Demo-Content)\"},{\"insert\":\"\\n\"}]}", 
+                                       "<p>Noch ein Testbeitrag (Demo-Content)</p>",
+                                       autor1
+                                     );                                         
+            final List<ArtikelEntity> artikelListe = List.of( artikel1, artikel2 );
+            _artikelRepo.saveAll( artikelListe );            
             
             final long anzahlNeu = _artikelRepo.count();
             LOG.info( "Artikel in DB nach Import von Demo-Content: {}", anzahlNeu );

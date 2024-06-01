@@ -8,11 +8,20 @@
 </head>
 <body>
 
+    <div th:replace="FragmentAnmeldeInfo :: loginInfo(${angemeldetAls})"></div>
+
     <h1 th:text="'Liste aller Artikel (' + ${#lists.size(artikel_liste)} + ')'"></h1>
 
     <p th:each="artikel : ${artikel_liste}">
         <a th:href="'/app/artikel/' + ${artikel.getId()}" th:text="${artikel.getTitel()}"></a>
+        von
+        <span th:text="${artikel.getAutor().getName()}"></span>
         <span class="klein" th:text="' (' + ${#temporals.format(artikel.getZeitpunktAngelegt(), 'dd. MMMM yyyy, HH:mm')} + ' Uhr)'" ></span>
+    </p>
+    <br><br>
+
+    <p th:if="${angemeldetAls != null}">
+        <a href="/editor.html" target="_blank" >Neuen Artikel anlegen</a>
     </p>
 
 </body>
