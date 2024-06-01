@@ -42,7 +42,7 @@ public class ArtikelEntity {
      * </pre>
      */
     @Lob
-    @Column( name= "INHALT_DELTA")
+    @Column( name= "INHALT_DELTA" )
     private String inhaltDelta;
 
     /**
@@ -50,11 +50,11 @@ public class ArtikelEntity {
      * Kann größer als 4k werden, deshalb Annotation {@code LOB} für {@code CLOB} auf Datenbank.
      */
     @Lob
-    @Column( name= "INHALT_HTML")
+    @Column( name= "INHALT_HTML" )
     private String inhaltHTML;
 
     /** Zeitpunkt (Datum+Uhrzeit), zu dem der Artikel angelegt wurde. */
-    @Column( name= "ZEITPUNKT_ANGELEGT")
+    @Column( name= "ZEITPUNKT_ANGELEGT" )
     private LocalDateTime zeitpunktAngelegt;
 
     /** 
@@ -62,7 +62,7 @@ public class ArtikelEntity {
      * wenn der Artikel noch nie geändert wurde, dann ist der Zeitpunkt der selbe 
      * wie für {@link #zeitpunktAngelegt}.
      */
-    @Column( name= "ZEITPUNKT_GAENDERT")
+    @Column( name= "ZEITPUNKT_GAENDERT" )
     private LocalDateTime zeitpunktGeaendert;
 
 

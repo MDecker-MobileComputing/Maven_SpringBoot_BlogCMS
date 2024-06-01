@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import de.eldecker.dhbw.spring.blog.db.ArtikelEntity;
 import de.eldecker.dhbw.spring.blog.db.ArtikelRepo;
 
-
+/**
+ * Bean um bei Bedarf Demo-Content unmittelbar nach Start der Anwendung zu importieren.
+ */
 @Service
 public class DatenImporterApplicationRunner implements ApplicationRunner {
 
@@ -48,12 +50,11 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
             LOG.info( "Keine Artikel in Datenbank, importiere Demo-Content." );
             
             final ArtikelEntity artikel1 = 
-                    new ArtikelEntity( "Test-Beitrag", 
+                    new ArtikelEntity( "Test-Beitrag (automatisch erzeugt)", 
                                        "{\"ops\":[{\"attributes\":{\"bold\":true},\"insert\":\"Testbeitrag (Demo-Content)\"},{\"insert\":\"\\n\"}]}", 
                                        "<p>Testbeitrag (Demo-Content)</p>");                                         
             
-            _artikelRepo.save( artikel1 );
-            
+            _artikelRepo.save( artikel1 );            
             
             final long anzahlNeu = _artikelRepo.count();
             LOG.info( "Artikel in DB nach Import von Demo-Content: {}", anzahlNeu );

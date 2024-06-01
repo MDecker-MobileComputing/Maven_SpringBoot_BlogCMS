@@ -34,12 +34,12 @@ ul li {
     margin-top: 1em;
 }
 
-textarea {
+input {
     width: 100%;
     margin-bottom: 1.5em
 }
 @media (min-width: 800px) {
-    textarea {
+    input {
         width: 50%;
     }
 }
@@ -48,3 +48,9 @@ textarea {
     border: 1px solid black;
     padding: 1em;
 }
+
+.ql-editor{
+    height: 500;
+    max-height: 500px;
+    overflow: auto;
+  }
