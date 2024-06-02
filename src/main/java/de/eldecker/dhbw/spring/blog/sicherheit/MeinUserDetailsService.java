@@ -20,6 +20,7 @@ import de.eldecker.dhbw.spring.blog.db.AutorenRepo;
 @Service
 public class MeinUserDetailsService implements UserDetailsService {
 
+    /** Rolle für Autoren, erlaubt anlegen und ändern von Artikeln. */
     public static final String ROLLE_AUTOR = "autor";
 
     /** Repo-Bean für Zugriff auf Datenbanktabelle mit Autoren. */
@@ -46,6 +47,7 @@ public class MeinUserDetailsService implements UserDetailsService {
      * @return Nutzer-Objekt für {@code nutzername}, enthält u.a. Passwort im Bcrypt-Format
      *
      * @throws UsernameNotFoundException Es gibt keinen Nutzer mit {@code nutzername}
+     *                                   in der Datenbanktabelle {@code AUTOR}
      */
     @Override
     public UserDetails loadUserByUsername( String nutzername ) throws UsernameNotFoundException {
