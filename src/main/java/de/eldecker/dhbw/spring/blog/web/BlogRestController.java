@@ -49,9 +49,9 @@ public class BlogRestController {
 
     /** Repo-Bean für Zugriff auf Tabelle mit Artikeln. */
     private final ArtikelRepo _artikelRepo;
-    
+
     /** Repo-Bean für Zugriff auf Tabelle mit Autoren. */
-    private final AutorenRepo _autorenRepo; 
+    private final AutorenRepo _autorenRepo;
 
 
     /**
@@ -67,7 +67,7 @@ public class BlogRestController {
         _objectMapper = objectMapper;
     }
 
-    
+
     /**
      * Artikel für Änderung für quilljs bereitstellen.
      *
@@ -88,64 +88,64 @@ public class BlogRestController {
      */
     @GetMapping( "/holen/{artikelID}" )
     public ResponseEntity<String> artikelHolen( @PathVariable("artikelID") long artikelID,
-                                                Authentication authentication ) {                                                 
-        
+                                                Authentication authentication ) {
+
         if ( authentication == null || authentication.isAuthenticated() == false ) {
-            
+
             final String fehlerText = "Unangemeldeter Nutzer kann Artikel nicht für Änderung abrufen.";
             LOG.error( fehlerText );
-            return new ResponseEntity<>( fehlerText, UNAUTHORIZED );            
-        }                
+            return new ResponseEntity<>( fehlerText, UNAUTHORIZED );
+        }
         final String nameAutor = authentication.getName();
-        
+
         final Optional<ArtikelEntity> artikelOptional = _artikelRepo.findById( artikelID );
         if ( artikelOptional.isEmpty() ) {
 
             LOG.warn( "Artikel mit ungültigter ID={} von Frontend angefordert.", artikelID );
-            return new ResponseEntity<>( "Kein Artikel mit ID=" + artikelID + " gefunden.", 
+            return new ResponseEntity<>( "Kein Artikel mit ID=" + artikelID + " gefunden.",
                                          NOT_FOUND );
         }
 
         final ArtikelEntity artikelEntity = artikelOptional.get();
-        
+
         if ( artikelEntity.getAutor().getName().equals( nameAutor ) == false ) {
-            
+
             final String fehlerText = "Angemeldeter Nutzer ist nicht der Autor des Artikels.";
             LOG.error( fehlerText );
-            return new ResponseEntity<>( fehlerText, UNAUTHORIZED );              
+            return new ResponseEntity<>( fehlerText, UNAUTHORIZED );
         }
 
         final TitelUndDeltaInhaltDTO dto =
                 new TitelUndDeltaInhaltDTO( artikelEntity.getTitel(),
-                                            artikelEntity.getInhaltDelta() );        
+                                            artikelEntity.getInhaltDelta() );
         try {
-            
+
             final String json = _objectMapper.writeValueAsString( dto );
-            
-            return new ResponseEntity<>( json, OK);             
+
+            return new ResponseEntity<>( json, OK);
         }
         catch ( JsonProcessingException ex ) {
-            
+
             LOG.error( "Fehler bei Serialisierung von DTO nach JSON: " + ex.getMessage() );
-            return new ResponseEntity<>( "Interner Fehler bei Bereitstellung von Artikel im JSON-Format.", 
+            return new ResponseEntity<>( "Interner Fehler bei Bereitstellung von Artikel im JSON-Format.",
                                           INTERNAL_SERVER_ERROR );
         }
     }
 
-    
+
     /**
      * REST-Endpunkt um neuen Artikel zu speichern.
      *
      * @param jsonPayload JSON-Payload vom Frontend mit neuem Artikel
-     * 
-     * @param authentication Objekt, um Authentifzierung abzufragen 
+     *
+     * @param authentication Objekt, um Authentifzierung abzufragen
      *
      * @return Mögliche HTTP-Status-Codes:
      *         <ul>
      *         <li>201 (Created)     : Erfolg, Body enthält Pfad, an dem der neue Artikel zu finden ist.</li>
      *         <li>400 (Bad Request) : JSON-Payload konnte nicht deserialisert werden; Body enthält Fehlermeldung.</li>
      *         <li>401 (Unauthorized): Nutzer ist nicht angemeldet.</i>
-     *         <li>403 (Forbidden)   : Nutzer ist angemeldet, aber wurde nicht in DB gefunden (kann eigentlich nicht sein).</li> 
+     *         <li>403 (Forbidden)   : Nutzer ist angemeldet, aber wurde nicht in DB gefunden (kann eigentlich nicht sein).</li>
      *         </ul>
      */
     @PostMapping( "/neu" )
@@ -153,22 +153,22 @@ public class BlogRestController {
                                               Authentication authentication ) {
 
         if ( authentication == null || authentication.isAuthenticated() == false ) {
-            
+
             final String fehlerText = "Unangemeldeter Nutzer kann nicht neuen Artikel anlegen.";
             LOG.error( fehlerText );
-            return new ResponseEntity<>( fehlerText, UNAUTHORIZED );            
+            return new ResponseEntity<>( fehlerText, UNAUTHORIZED );
         }
-        
-        final String anmeldeName = authentication.getName(); 
+
+        final String anmeldeName = authentication.getName();
         final Optional<AutorEntity> autorOptional = _autorenRepo.findByName( anmeldeName );
         if ( autorOptional.isEmpty() ) {
-            
+
             final String fehlerText = "Nutzer angemeldet, aber nicht in DB gefunden.";
             LOG.error( fehlerText );
-            return new ResponseEntity<>( fehlerText, FORBIDDEN );            
+            return new ResponseEntity<>( fehlerText, FORBIDDEN );
         }
         final AutorEntity autorEntity = autorOptional.get();
-        
+
         try {
 
             final ArtikelDTO artikel = _objectMapper.readValue( jsonPayload, ArtikelDTO.class );
@@ -179,10 +179,11 @@ public class BlogRestController {
 
                 return new ResponseEntity<>( "Titel von Artikel ist leer", BAD_REQUEST );
             }
-            
+
             ArtikelEntity artikelEntity = new ArtikelEntity( artikel.titel().trim(),
                                                              artikel.inhaltDelta() ,
                                                              artikel.inhaltHTML()  ,
+                                                             artikel.inhaltPlain() ,
                                                              autorEntity );
             artikelEntity = _artikelRepo.save( artikelEntity );
 
@@ -190,34 +191,34 @@ public class BlogRestController {
                       artikelEntity.getTitel(), anmeldeName, artikelEntity.getId() );
 
             final String forwardToPfad = "/app/artikel/" + artikelEntity.getId();
-            
+
             return new ResponseEntity<>( forwardToPfad, CREATED );
         }
         catch ( JsonProcessingException ex ) {
 
-            final String fehlerText = "JSON mit neuen Artikel kann nicht deserialisiert werden. " + 
+            final String fehlerText = "JSON mit neuen Artikel kann nicht deserialisiert werden. " +
                                       ex.getMessage();
             LOG.error( fehlerText );
             return new ResponseEntity<>( fehlerText, BAD_REQUEST );
         }
     }
-    
-    
+
+
     /**
      * REST-Endpunkt um geänderten Artikel zu speichern.
      *
      * @param jsonPayload JSON-Payload vom Frontend mit neuem Artikel.
-     * 
+     *
      * @param authentication Objekt, um Authentifzierung abzufragen
      *
      * @return Mögliche HTTP-Status-Codes:
      *         <ul>
      *         <li>200 (OK): Erfolg, Body enthält Pfad, an dem der geänderte Artikel zu finden ist.</li>
-     *         <li>400 (Bad Request): 
+     *         <li>400 (Bad Request):
      *         <ul>
      *         <li>Leerer Titel</li>
      *         <li>JSON-Payload konnte nicht deserialisert werden</li>
-     *         <li>Artikel mit ID aus Payload nicht gefunden</li>         
+     *         <li>Artikel mit ID aus Payload nicht gefunden</li>
      *         </ul>
      *         In allen Fällen enthält die Payload eine Fehlermeldung.
      *         </li>
@@ -227,59 +228,60 @@ public class BlogRestController {
      */
     @PostMapping( "/aendern" )
     public ResponseEntity<String> artikelAendern( @RequestBody String jsonPayload,
-                                                  Authentication authentication) {    
-        
+                                                  Authentication authentication) {
+
         if ( authentication == null || authentication.isAuthenticated() == false ) {
-            
+
             final String fehlerText = "Unangemeldeter Nutzer kann Artikel nicht ändern.";
             LOG.error( fehlerText );
-            return new ResponseEntity<>( fehlerText, UNAUTHORIZED );            
-        }        
+            return new ResponseEntity<>( fehlerText, UNAUTHORIZED );
+        }
         final String nameAutor = authentication.getName();
-        
+
         try {
-                        
-            final ArtikelDTO artikelDTO = _objectMapper.readValue( jsonPayload, ArtikelDTO.class );           
+
+            final ArtikelDTO artikelDTO = _objectMapper.readValue( jsonPayload, ArtikelDTO.class );
             if ( artikelDTO.titel().isBlank() ) {
 
                 return new ResponseEntity<>( "Titel von zu änderndem Artikel ist leer", BAD_REQUEST );
-            }            
-            
+            }
+
             long artikelId = artikelDTO.artikelID();
             final Optional<ArtikelEntity> artikelOptional = _artikelRepo.findById( artikelId );
             if ( artikelOptional.isEmpty() ) {
-                
+
                 final String fehlerText = "Kein Artikel mit ID=" + artikelId + " zum Ändern gefunden.";
                 LOG.error( fehlerText );
                 return new ResponseEntity<>( fehlerText, BAD_REQUEST );
             }
-            
+
             final ArtikelEntity artikelEntity = artikelOptional.get();
-            
+
             if ( artikelEntity.getAutor().getName().equals( nameAutor ) == false ) {
-                
+
                 final String fehlerText = "Angemeldeter Nutzer ist nicht der Autor des Artikels.";
                 LOG.error( fehlerText );
-                return new ResponseEntity<>( fehlerText, UNAUTHORIZED );              
-            }            
-            
+                return new ResponseEntity<>( fehlerText, UNAUTHORIZED );
+            }
+
             artikelEntity.setTitel(       artikelDTO.titel()       );
             artikelEntity.setInhaltDelta( artikelDTO.inhaltDelta() );
             artikelEntity.setInhaltHTML(  artikelDTO.inhaltHTML()  );
+            artikelEntity.setInhaltPlain( artikelDTO.inhaltPlain() );
             artikelEntity.setZeitpunktGeaendert( now()             );
-            
+
             _artikelRepo.save( artikelEntity );
-            
-            LOG.info( "Geänderter Artikel mit ID={} auf DB geschrieben: \"{}\"", 
+
+            LOG.info( "Geänderter Artikel mit ID={} auf DB geschrieben: \"{}\"",
                       artikelDTO.artikelID(), artikelDTO.titel() );
-            
+
             final String forwardToPfad = "/app/artikel/" + artikelId;
-            
+
             return new ResponseEntity<>( forwardToPfad, OK );
         }
         catch ( JsonProcessingException ex ) {
 
-            final String fehlerText = "JSON mit geändertem Artikel kann nicht deserialisiert werden. " + 
+            final String fehlerText = "JSON mit geändertem Artikel kann nicht deserialisiert werden. " +
                                       ex.getMessage();
             LOG.error( fehlerText );
             return new ResponseEntity<>( fehlerText, BAD_REQUEST );

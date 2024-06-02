@@ -124,16 +124,15 @@ function speichern() {
 
     const deltaObjekt = quillEditor.getContents();
     const deltaString = JSON.stringify( deltaObjekt );
-    console.log( "Delta-String von quilljs: " + deltaString );
-
     const htmlContent = quillEditor.root.innerHTML;
-    console.log( "HTML-String von quilljs: " + htmlContent );
+    const plainString = quillEditor.getText();
 
     const payloadObjekt = {
                             artikelID  : artikelID  , // -1 für neuen Artikel
                             titel      : titel      ,
                             inhaltDelta: deltaString,
-                            inhaltHTML : htmlContent
+                            inhaltHTML : htmlContent,
+                            inhaltPlain: plainString
                           };
 
     const payloadString = JSON.stringify( payloadObjekt );

@@ -38,9 +38,9 @@ public class ArtikelEntity {
 
     /**
      * Artikel im Delta-Format von quilljs (falls geändert werden muss), ohne Überschrift/Titel.
-     * Kann größer als 4k werden, deshalb Annotation {@code LOB} für {@code CLOB} auf Datenbank.
+     * Kann größer als 4 KB werden, deshalb Annotation {@code LOB} für {@code CLOB} auf Datenbank.
      * <br><br>
-     * 
+     *
      * Beispiel für Delta-Format:
      * <pre>
      * {"ops":[{"attributes":{"bold":true},"insert":"Testbeitrag (Demo-Content)"},{"insert":"\n"}]}
@@ -52,33 +52,41 @@ public class ArtikelEntity {
 
     /**
      * Artikel im HTML-Format für Darstellung mit statischer Seite, ohne Überschrift/Titel.
-     * Kann größer als 4k werden, deshalb Annotation {@code LOB} für {@code CLOB} auf Datenbank.
+     * Kann größer als 4 KB werden, deshalb Annotation {@code LOB} für {@code CLOB} auf Datenbank.
      */
     @Lob
     @Column( name= "INHALT_HTML" )
     private String inhaltHTML;
 
+    /**
+     * Inhalt als reiner Text, ganz ohne Formatierungszeichen, für Volltextsuche.
+     * Kann größer als 4 KB werden, deshalb Annotation {@code LOB} für {@code CLOB} auf Datenbank.
+     */
+    @Lob
+    @Column( name= "INHALT_PLAINTEXT" )
+    private String inhaltPlain;
+
     /** Zeitpunkt (Datum+Uhrzeit), zu dem der Artikel angelegt wurde. */
     @Column( name= "ZEITPUNKT_ANGELEGT" )
     private LocalDateTime zeitpunktAngelegt;
 
-    /** 
+    /**
      * Zeitpunkt (Datum+Uhrzeit), zu dem der Artikel zum letzten Mal geändert wurde;
-     * wenn der Artikel noch nie geändert wurde, dann ist der Zeitpunkt der selbe 
+     * wenn der Artikel noch nie geändert wurde, dann ist der Zeitpunkt der selbe
      * wie für {@link #zeitpunktAngelegt}.
      */
     @Column( name= "ZEITPUNKT_GAENDERT" )
     private LocalDateTime zeitpunktGeaendert;
-    
+
     /**
      * Autor, der den Blog-Artikel angelegt hat und ihn ändern darf
-     * (ein Autor darf nur die von ihm angelegten Artikel ändern). 
+     * (ein Autor darf nur die von ihm angelegten Artikel ändern).
      * Die Autoren-Entity ist der "Owner" dieser Assoziation, da in ihrer
-     * Tabelle es eine Spalte für das Fremdschlüsselattribut gibt. 
+     * Tabelle es eine Spalte für das Fremdschlüsselattribut gibt.
      */
     @ManyToOne( fetch = EAGER )
     @JoinColumn( name = "autor__fk", referencedColumnName = "id" )
-    private AutorEntity autor;    
+    private AutorEntity autor;
 
 
     /**
@@ -89,7 +97,8 @@ public class ArtikelEntity {
         titel       = "";
         inhaltDelta = "";
         inhaltHTML  = "";
-        
+        inhaltPlain = "";
+
         autor = null;
     }
 
@@ -97,47 +106,56 @@ public class ArtikelEntity {
     /**
      * Konstruktor um Werte für drei {@code String}-Attribute zu setzen.
      * <br><br>
-     * 
+     *
      * Zeitpunkt für Anlegen und letzte Änderung wird auf aktuelle Systemzeit
      * gesetzt.
-     * 
+     *
      * @param titel Titel/Überschrift von Artikel
-     * 
+     *
      * @param inhaltDelta Inhalt (ohne Titel/Überschrift) im quill.js-eigenen Delta-Format
-     * 
-     * @param inhaltHTML Inhalt (ohne Titel/Überschrift) im HTML-Format 
+     *
+     * @param inhaltHTML Inhalt (ohne Titel/Überschrift) im HTML-Format
+     *
+     * @param inhaltPlain Inhalt (ohne Titel/Überschrift) als reiner Text ohne Formatierungen,
+     *                    um Volltextsuche zu ermöglichen
      */
-    public ArtikelEntity( String titel, String inhaltDelta, String inhaltHTML ) {
+    public ArtikelEntity( String titel, String inhaltDelta, String inhaltHTML, String inhaltPlain ) {
 
         this.titel       = titel;
         this.inhaltDelta = inhaltDelta;
         this.inhaltHTML  = inhaltHTML;
+        this.inhaltPlain = inhaltPlain;
 
         this.zeitpunktAngelegt  = now();
         this.zeitpunktGeaendert = now();
-        
+
         autor = null;
     }
-    
+
     /**
      * Konstruktor um Werte für die drei String-Attribute und den Autor zu setzen.
      * <br><br>
-     * 
+     *
      * Zeitpunkt für Anlegen und letzte Änderung wird auf aktuelle Systemzeit
-     * gesetzt. 
-     * 
+     * gesetzt.
+     *
      * @param titel Titel/Überschrift von Artikel
-     * 
+     *
      * @param inhaltDelta Inhalt (ohne Titel/Überschrift) im quill.js-eigenen Delta-Format
-     * 
-     * @param inhaltHTML Inhalt (ohne Titel/Überschrift) im HTML-Format 
-     * 
+     *
+     * @param inhaltHTML Inhalt (ohne Titel/Überschrift) im HTML-Format
+     *
+     * @param inhaltPlain Inhalt (ohne Titel/Überschrift) als reiner Text ohne Formatierungen,
+     *                    um Volltextsuche zu ermöglichen
+     *
      * @param autor Autor, der den Artikel geschrieben hat
      */
-    public ArtikelEntity( String titel, String inhaltDelta, String inhaltHTML, AutorEntity autor ) {
-       
-        this ( titel, inhaltDelta, inhaltHTML );
-        
+    public ArtikelEntity( String titel,
+                          String inhaltDelta, String inhaltHTML, String inhaltPlain,
+                          AutorEntity autor ) {
+
+        this ( titel, inhaltDelta, inhaltHTML, inhaltPlain );
+
         this.autor = autor;
     }
 
@@ -221,6 +239,28 @@ public class ArtikelEntity {
 
 
     /**
+     * Setter für Inhalt im Plaintext-Format (für Volltextsuche).
+     *
+     * @param inhaltPlain Artikel im Plaintext-Format, ganz ohne Formatierungszeichen
+     */
+    public void setInhaltPlain( String inhaltPlain ) {
+
+        this.inhaltPlain = inhaltPlain;
+    }
+
+
+    /**
+     * Getter für Inhalt im Plaintext-Format (für Volltextsuche).
+     *
+     * @return Artikel im Plaintext-Format, ganz ohne Formatierungszeichen
+     */
+    public String getInhaltPlain() {
+
+        return this.inhaltPlain;
+    }
+
+
+    /**
      * Getter für Zeitpunkt, zu dem der Artikel angelegt wurde.
      *
      * @return Zeitpunkt (Datum+Uhrzeit)
@@ -241,48 +281,48 @@ public class ArtikelEntity {
         this.zeitpunktAngelegt = zeitpunktAngelegt;
     }
 
-    
+
     /**
      * Getter für Zeitpunkt, zu dem der Artikel zum letzten Mal geändert wurde.
-     * 
-     * @return Letzter Änderungszeitpunkt; gleicher Wert wie von  
+     *
+     * @return Letzter Änderungszeitpunkt; gleicher Wert wie von
      *         {@link #getZeitpunktAngelegt()} wenn noch nie geändert.
      */
     public LocalDateTime getZeitpunktGeaendert() {
-        
+
         return zeitpunktGeaendert;
     }
 
 
     /**
      * Setter für Zeitpunkt, zu dem der Artikel zum letzten Mal geändert wurde.
-     * 
+     *
      * @param  zeitpunktGeaendert Letzter Änderungszeitpunkt
-     */    
+     */
     public void setZeitpunktGeaendert( LocalDateTime zeitpunktGeaendert ) {
-        
+
         this.zeitpunktGeaendert = zeitpunktGeaendert;
     }
-        
-    
+
+
     /**
      * Getter für Autor des Artikels.
-     * 
+     *
      * @return Autor, der Artikel geschrieben und evtl. auch geändert hat.
      */
     public AutorEntity getAutor() {
-        
+
         return autor;
     }
 
-    
+
     /**
      * Setter für Autor des Artikels.
-     * 
-     * @param autor Autor, der Artikel geschrieben und evtl. auch geändert hat.
+     *
+     * @param autor Autor, der Artikel geschrieben und evtl. auch geändert hat
      */
     public void setAutor( AutorEntity autor ) {
-        
+
         this.autor = autor;
     }
 
@@ -294,10 +334,9 @@ public class ArtikelEntity {
      */
     @Override
     public String toString() {
-        
-        final String str = format( "Artikel mit ID=%d von Autor %s: \"%s\"", 
-                                   id, autor, titel );
 
+        final String str = format( "Artikel mit ID=%d von Autor %s: \"%s\"",
+                                   id, autor, titel );
         return str;
     }
 
@@ -311,17 +350,17 @@ public class ArtikelEntity {
     @Override
     public int hashCode() {
 
-        return Objects.hash( titel, 
-                             inhaltDelta, inhaltHTML, 
+        return Objects.hash( titel,
+                             inhaltDelta, inhaltHTML, inhaltPlain,
                              zeitpunktAngelegt, zeitpunktGeaendert,
                              autor
                            );
     }
 
-    
+
     /**
-     * Vergleich aufrufendes Objekt mit {@code obj}.
-     * 
+     * Vergleicht aufrufendes Objekt mit {@code obj}.
+     *
      * @return {@code true} gdw. {code obj} auch ein Objekt der Klasse {@link ArtikelEntity}
      *         ist und alle Attribute (bis auf die ID) dieselben Werte haben
      */
@@ -337,6 +376,7 @@ public class ArtikelEntity {
             return Objects.equals( titel             , andererArtikel.titel              ) &&
                    Objects.equals( inhaltDelta       , andererArtikel.inhaltDelta        ) &&
                    Objects.equals( inhaltHTML        , andererArtikel.inhaltHTML         ) &&
+                   Objects.equals( inhaltPlain       , andererArtikel.inhaltPlain        ) &&
                    Objects.equals( zeitpunktAngelegt , andererArtikel.zeitpunktAngelegt  ) &&
                    Objects.equals( zeitpunktGeaendert, andererArtikel.zeitpunktGeaendert ) &&
                    Objects.equals( autor             , andererArtikel.autor              );
