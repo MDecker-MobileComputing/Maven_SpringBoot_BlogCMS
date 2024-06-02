@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import de.eldecker.dhbw.spring.blog.db.AutorEntity;
 import de.eldecker.dhbw.spring.blog.db.AutorenRepo;
+import de.eldecker.dhbw.spring.blog.sicherheit.RollenChecker;
 import de.eldecker.dhbw.spring.blog.sicherheit.Sicherheitskonfiguration;
 
 
@@ -32,38 +33,43 @@ import de.eldecker.dhbw.spring.blog.sicherheit.Sicherheitskonfiguration;
 @Controller
 @RequestMapping( "/admin" )
 public class AdminThymeleafController {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger( AdminThymeleafController.class );
 
     /** Repo-Bean für Zugriff auf Datenbanktabelle mit Autoren (Nutzer). */
     private final AutorenRepo _autorenRepo;
-    
+
     /** Bean für Hashing von Passwort. */
     private final BCryptPasswordEncoder _bcryptEncoder;
-    
-    
+
+    /** Bean zum Überprüfen, ob Nutzer bestimmte Rollen hat. */
+    private final RollenChecker _rollenChecker;
+
+
     /**
      * Konstruktor für <i>Dependency Injection</i>.
      */
     public AdminThymeleafController( AutorenRepo autorenRepo,
-                                     BCryptPasswordEncoder bcryptEncoder ) {
-        
+                                     BCryptPasswordEncoder bcryptEncoder,
+                                     RollenChecker rollenChecker ) {
+
         _autorenRepo   = autorenRepo;
         _bcryptEncoder = bcryptEncoder;
+        _rollenChecker = rollenChecker;
     }
-    
-    
+
+
     /**
      * Zeigt die Seite für das Anlegen eines neuen Autors durch einen Admin
-     * an. Es wird überprüft, ob der Nutzer die Admin-Rolle hat (eigentlich 
+     * an. Es wird überprüft, ob der Nutzer die Admin-Rolle hat (eigentlich
      * würde es reichen, diese Überprüfung beim Absenden des Formulars mit
      * dem Namen und Passwort des neuen Nutzers zu machen).
-     * 
-     * @param authentication Objekt für Abfrage authentifizierter Nutzer und 
+     *
+     * @param authentication Objekt für Abfrage authentifizierter Nutzer und
      *                       dessen Rollen
      *
      * @param model Objekt für Platzhalterwerte in Template
-     * 
+     *
      * @return Name der Template-Datei "autor-neu-formular.html" wenn der aufrufende
      *         Nutzer die Admin-Rolle hat, sonst "fehler.html"; in beiden Fällen wird
      *         der Dateiname ohne die Datei-Endung zurückgegeben.
@@ -71,38 +77,38 @@ public class AdminThymeleafController {
     @GetMapping( "/autorAnlegenFormular" )
     public String autorAnlegenFormular( Authentication authentication,
                                         Model model ) {
-       
-        if ( istAdmin( authentication ) == false ) {
-            
-            model.addAttribute( "fehlertext", 
+
+        if ( _rollenChecker.istAdmin( authentication ) == false ) {
+
+            model.addAttribute( "fehlertext",
                                 "Nur Admins dürfen Seite zum Anlegen neuer Autoren aufrufen." );
             return "fehler";
         }
-        
+
         return "autor-anlegen-formular";
     }
 
-    
+
     /**
      * Controller-Methode für eigentliches Anlegen neuer Autor durch einen Admin.
-     * 
-     * @param authentication Objekt für Abfrage authentifizierter Nutzer und 
+     *
+     * @param authentication Objekt für Abfrage authentifizierter Nutzer und
      *                       dessen Rollen
-     * 
+     *
      * @param model Objekt für Platzhalterwerte in Template
-     * 
+     *
      * @param anmeldename Anmeldenamen für den neuen Autor
-     * 
+     *
      * @param passwort1 Passwort für neuen Autor
-     * 
-     * @param passwort2 Wiederholung Passwort für neuen Autor, 
+     *
+     * @param passwort2 Wiederholung Passwort für neuen Autor,
      *                  muss mit {@code passwort1} übereinstimmen.
-     * 
-     * @return Name von Template-Datei "autor-anlegen-ergebnis.html" mit  
-     *         dem Ergebnis (hat Anlegen geklappt oder nicht, z.B. weil 
-     *         zwei unterschiedliche Passwörter eingegeben wurden); wenn 
-     *         der Nutzer keine Admin-Rolle hat, dann "fehler.html"; in 
-     *         beiden Fällen wird der Dateiname ohne die Datei-Endung 
+     *
+     * @return Name von Template-Datei "autor-anlegen-ergebnis.html" mit
+     *         dem Ergebnis (hat Anlegen geklappt oder nicht, z.B. weil
+     *         zwei unterschiedliche Passwörter eingegeben wurden); wenn
+     *         der Nutzer keine Admin-Rolle hat, dann "fehler.html"; in
+     *         beiden Fällen wird der Dateiname ohne die Datei-Endung
      *         zurückgegeben.
      */
     @PostMapping( "/autorAnlegen" )
@@ -110,98 +116,58 @@ public class AdminThymeleafController {
                                         Model model,
                                         @RequestParam(value = "anmeldename", required = true) String anmeldename,
                                         @RequestParam(value = "passwort1"  , required = true) String passwort1  ,
-                                        @RequestParam(value = "passwort2"  , required = true) String passwort2  ) {                                                                
+                                        @RequestParam(value = "passwort2"  , required = true) String passwort2  ) {
 
-        if ( istAdmin( authentication ) == false ) {
-            
-            model.addAttribute( "fehlertext", 
+        if ( _rollenChecker.istAdmin( authentication ) == false ) {
+
+            model.addAttribute( "fehlertext",
                                 "Nur Admins dürfen neue Autoren anlegen." );
             return "fehler";
         }
-        
+
         anmeldename = anmeldename.trim();
         if ( anmeldename.length() < 6 ) {
-            
-            model.addAttribute( "ergebnis_text", "Anmeldename hat weniger als 6 Zeichen." ); 
-            return "autor-anlegen-ergebnis"; 
+
+            model.addAttribute( "ergebnis_text", "Anmeldename hat weniger als 6 Zeichen." );
+            return "autor-anlegen-ergebnis";
         }
-        
+
         passwort1 = passwort1.trim();
         passwort2 = passwort2.trim();
-        
+
         if ( passwort1.length() < 6 ) {
-            
-            model.addAttribute( "ergebnis_text", "Passwort hat weniger als 6 Zeichen." ); 
-            return "autor-anlegen-ergebnis";             
+
+            model.addAttribute( "ergebnis_text", "Passwort hat weniger als 6 Zeichen." );
+            return "autor-anlegen-ergebnis";
         }
 
         if ( passwort1.length() != passwort2.length() ) {
-            
-            model.addAttribute( "ergebnis_text", "Die beiden Passwörter sind unterschiedlich lang." ); 
-            return "autor-anlegen-ergebnis";             
+
+            model.addAttribute( "ergebnis_text", "Die beiden Passwörter sind unterschiedlich lang." );
+            return "autor-anlegen-ergebnis";
         }
-        
+
         if ( ! passwort1.equals( passwort2) ) {
 
-            model.addAttribute( "ergebnis_text", "Die beiden Passwörter sind nicht identisch." ); 
-            return "autor-anlegen-ergebnis";             
+            model.addAttribute( "ergebnis_text", "Die beiden Passwörter sind nicht identisch." );
+            return "autor-anlegen-ergebnis";
         }
 
-        
+
         final String passwortHash = _bcryptEncoder.encode( passwort1 );
-        
+
         AutorEntity autorEntityNeu = new AutorEntity( anmeldename, passwortHash, false );
-        
+
         autorEntityNeu = _autorenRepo.save( autorEntityNeu );
-        
-        final String erfolgsText = format( "Autor \"%s\" erfolgreich angelegt mit ID=%d.",  
+
+        final String erfolgsText = format( "Autor \"%s\" erfolgreich angelegt mit ID=%d.",
                                            anmeldename, autorEntityNeu.getId() );
-        
+
         LOG.info( erfolgsText );
-        
+
         model.addAttribute( "ergebnis_text", erfolgsText );
-        
+
         return "autor-anlegen-ergebnis";
-    }
-    
-    
-    /**
-     * Hilfsmethode zum Überprüfen, ob der Nutzer, der den Request gemacht
-     * hat, angemeldet ist und auch die Admin-Rolle hat.
-     * 
-     * @param auth {@code Authentication}-Objekt, das der Controller-Methode
-     *             als Argument übergeben wurde
-     *             
-     * @return {@code true} gdw. der aktuelle Nutzer angemeldet ist und
-     *         die Admin-Rolle hat (nur ein angemeldeter Nutzer kann die
-     *         Admin-Rolle haben)
-     */
-    private boolean istAdmin( Authentication authentication ) {
-        
-        if ( authentication == null || !authentication.isAuthenticated() ) {
-            
-            LOG.warn( "Nicht authentifizierter Nutzer hat versucht eine Admin-Seite aufzurufen." );
-            return false;
-        }
-        
-        final String rolleGesucht = "ROLE_" + ROLLE_ADMIN;
-        
-        final Collection<? extends GrantedAuthority> authoritiesCollection =  
-                authentication.getAuthorities();
-        
-        for ( GrantedAuthority ga: authoritiesCollection ) {
-            
-            final String authorityString =  ga.getAuthority();
-            if ( authorityString.equals( rolleGesucht ) ) {
-                
-                return true;
-            }
-        }
-        
-        LOG.warn( "Autor \"{}\" hat versucht ohne Admin-Rolle eine Admin-Seite aufzurufen.", 
-                  authentication.getName() );
-        
-        return false;
     }
 
 }
