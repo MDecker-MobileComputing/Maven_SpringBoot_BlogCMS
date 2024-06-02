@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Blog-CMS: Artikelsuche</title>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../styles.css">
+</head>
+<body>
+
+  <h1>Blog-CMS: Artikelsuche</h1>
+
+  <form action="/app/artikel/suche" method="get">
+
+    <label class="fett" for="suchbegriff">Suchbegriff:</label>&nbsp;
+    <input type="text" id="suchbegriff" name="suchbegriff"><br>
+
+    <input type="submit" value="Suche"       >
+    <input type="reset"  value="Zurücksetzen">
+  </form>
+  <br><br>
+
+  <p>
+    Der Suchbegriff wird ohne Unterscheidung von Groß- und Kleinschreibung
+    als Teil-String im Titel und Text des Artikels gesucht.
+  </p>
+
+</body>

@@ -24,43 +24,43 @@ public class Sicherheitskonfiguration {
                                                                "/styles.css"           ,
                                                                "/h2-console/**"        ,
                                                                "/app/**"               ,
-                                                               "/autor-abgemeldet.html"
+                                                               "/public/**"
                                                              };
-    
+
     /**
      * Konfiguration Sicherheit für HTTP (formularbasierte Authentifizierung).
-     * 
+     *
      * @param http Objekt als Ausgangspunkt für Sicherheitskonfiguration
-     * 
+     *
      * @return Sicherheitskonfiguration
-     * 
+     *
      * @throws Exception Fehler bei Sicherheitskonfiguration aufgetreten
-     */    
+     */
     @Bean
     public SecurityFilterChain httpKonfiguration( HttpSecurity http ) throws Exception {
 
         final AntPathRequestMatcher[] oeffentlichPfadMatcherArray = getMatcherFuerOeffentlichePfade();
-        
+
         return http.csrf( (csrf) -> csrf.disable() )
                    .authorizeHttpRequests( auth -> auth.requestMatchers( oeffentlichPfadMatcherArray ).permitAll()
                                                        .anyRequest().authenticated() )
-                   .formLogin( formLogin -> formLogin.defaultSuccessUrl( "/app/artikel/liste", true ) ) // true=alwaysUse 
+                   .formLogin( formLogin -> formLogin.defaultSuccessUrl( "/app/artikel/liste", true ) ) // true=alwaysUse
                    .logout(logout -> logout
                            .logoutUrl( "/abmelden" )
-                           .logoutSuccessUrl("/autor-abgemeldet.html")
+                           .logoutSuccessUrl("/public/autor-abgemeldet.html")
                            .invalidateHttpSession( true )
                            .deleteCookies( "JSESSIONID" )
                           )
                    .headers( headers -> headers.disable() ) // damit H2-Konsole funktioniert
-                   .build();                   
+                   .build();
     }
-    
-    
+
+
     /**
-     * Erzeugt für öffentliche Pfade aus String-Array in einen Array von 
+     * Erzeugt für öffentliche Pfade aus String-Array in einen Array von
      * {@code AntPathRequestMatcher}-Objekten.
      *
-     * @return Array mit Matcher-Objekten für die öffentliche Pfade 
+     * @return Array mit Matcher-Objekten für die öffentliche Pfade
      *         (Pfade, die ohne Authentifizierung aufgerufen werden können)
      */
     private static AntPathRequestMatcher[] getMatcherFuerOeffentlichePfade() {
@@ -73,5 +73,5 @@ public class Sicherheitskonfiguration {
         }
 
         return ergebnisArray;
-    }    
+    }
 }

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ergebnis für Suche in Blog-Artikeln</title>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../styles.css">
+</head>
+<body>
+
+    <h1>Ergebnis für Suche in Blog-Artikeln</h1>
+
+    <p>
+        <span class="fett">Suchbegriff: </span>
+        "<span th:text="${suchbegriff}"></span>"
+    </p>
+
+    <p>
+        <span class="fett">Anzahl der gefundenen Artikel: </span>
+        <span th:text="${#lists.size(artikel_liste)}"></span>
+    </p>
+    <br><br>
+
+    <table>
+        <tr>
+            <th>Artikel (Titel)</th>
+            <th>Erstellt am</th>
+            <th>Autor</th>
+        </tr>
+        <tr th:each="artikel : ${artikel_liste}">
+            <td><a th:href="'/app/artikel/' + ${artikel.getId()}"
+                   th:text="${artikel.titel}"></a></td>
+            <td th:text="${#temporals.format(artikel.getZeitpunktAngelegt(), 'dd. MMMM yyyy, HH:mm')} + ' Uhr'"></td>
+            <td th:text="${artikel.getAutor().getName()}"></td>
+        </tr>
+    </table>
+    <br><br>
+
+    <a href="/public/artikel-suche.html">Neue Suche starten</a>
+    <br><br>
+
+    <a href="/app/artikel/liste">Liste aller Artikel</a>
+
+</body>
+</html>

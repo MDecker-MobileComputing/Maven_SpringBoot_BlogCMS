@@ -34,12 +34,13 @@ ul li {
     margin-top: 1em;
 }
 
-input {
+input[type="text"] {
     width: 100%;
-    margin-bottom: 1.5em
+    margin-bottom: 1.5em;
 }
+
 @media (min-width: 800px) {
-    input {
+    input[type="text"] {
         width: 50%;
     }
 }
@@ -49,8 +50,11 @@ input {
     padding: 1em;
 }
 
-.ql-editor{
-    height: 500;
-    max-height: 500px;
-    overflow: auto;
-  }
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 10px;
+}
