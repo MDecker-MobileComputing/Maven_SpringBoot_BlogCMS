@@ -23,20 +23,14 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
 
     private final static Logger LOG = LoggerFactory.getLogger( DatenImporterApplicationRunner.class );
 
-    /**
-     * Objekt um Passwörter mit Bcrypt zu verhashen.
-     * <br><br>
-     *
-     * Alternative zur Erzeugung von Bcrypt-Hashes für Demo-User:
-     * Online-Dienste wie <a href="https://bcrypt.online/" target="_blank">bcrypt.online</a>.
-     */
-    private final static BCryptPasswordEncoder BCRYPT_ENCODER = new BCryptPasswordEncoder();
-
     /** Repo für Zugriff auf Tabelle mit Blog-Artikeln. */
     private final ArtikelRepo _artikelRepo;
 
     /** Repo für Zugriff auf Tabelle mit Autoren. */
     private final AutorenRepo _autorRepo;
+
+    /** Bean für Hashing von Passwort. */
+    private final BCryptPasswordEncoder _bcryptEncoder;
 
 
     /**
@@ -44,9 +38,11 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
      */
     @Autowired
     public DatenImporterApplicationRunner( ArtikelRepo artikelRepo,
-                                           AutorenRepo autorRepo   ) {
-        _artikelRepo = artikelRepo;
-        _autorRepo   = autorRepo;
+                                           AutorenRepo autorRepo,
+                                           BCryptPasswordEncoder bcryptEncoder ) {
+        _artikelRepo   = artikelRepo;
+        _autorRepo     = autorRepo;
+        _bcryptEncoder = bcryptEncoder;
     }
 
 
@@ -65,8 +61,8 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
                       anzahlAlt );
         } else {
 
-            final String passwort1 = BCRYPT_ENCODER.encode( "g3h3im" );
-            final String passwort2 = BCRYPT_ENCODER.encode( "s3cr3t" );
+            final String passwort1 = _bcryptEncoder.encode( "g3h3im" );
+            final String passwort2 = _bcryptEncoder.encode( "s3cr3t" );
 
             final AutorEntity autor1 = new AutorEntity( "alice", passwort1 );
             final AutorEntity autor2 = new AutorEntity( "bob"  , passwort2 );

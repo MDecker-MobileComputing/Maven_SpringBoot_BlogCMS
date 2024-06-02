@@ -63,7 +63,7 @@ public class MeinUserDetailsService implements UserDetailsService {
             final String passwort = autorEntity.getPasswort();
 
             final UserDetails userDetails = User.withUsername( nutzername )
-                                                .password( "{bcrypt}" + passwort )
+                                                .password( passwort )
                                                 .roles( ROLLE_AUTOR )
                                                 .build();
             return userDetails;
