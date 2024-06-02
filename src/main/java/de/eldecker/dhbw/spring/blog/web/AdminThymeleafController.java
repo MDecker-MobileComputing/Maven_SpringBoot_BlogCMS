@@ -80,6 +80,8 @@ public class AdminThymeleafController {
 
         if ( _rollenChecker.istAdmin( authentication ) == false ) {
 
+            LOG.warn( "Non-Admin-Nutzer hat versucht, Seite zum Anlegen neuer Autoren aufzurufen." );
+
             model.addAttribute( "fehlertext",
                                 "Nur Admins dürfen Seite zum Anlegen neuer Autoren aufrufen." );
             return "fehler";
@@ -119,6 +121,8 @@ public class AdminThymeleafController {
                                         @RequestParam(value = "passwort2"  , required = true) String passwort2  ) {
 
         if ( _rollenChecker.istAdmin( authentication ) == false ) {
+
+            LOG.warn( "Non-Admin-Nutzer hat versucht, neuen Autor anzulegen." );
 
             model.addAttribute( "fehlertext",
                                 "Nur Admins dürfen neue Autoren anlegen." );

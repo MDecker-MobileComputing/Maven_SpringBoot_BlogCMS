@@ -4,8 +4,6 @@ import static de.eldecker.dhbw.spring.blog.sicherheit.MeinUserDetailsService.ROL
 
 import java.util.Collection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -18,7 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class RollenChecker {
 
-    private static final Logger LOG = LoggerFactory.getLogger( RollenChecker.class );
+    /**
+     * Name der Admin-Rolle mit Prefix "ROLE_" (wird von <i>Spring Security</i> hinzugefügt,
+     * können wir nicht selbst hinzufügen.
+     */
+    public static final String ROLLE_ADMIN_MIT_PREFIX = "ROLE_" + ROLLE_ADMIN;
 
 
     /**
@@ -36,26 +38,21 @@ public class RollenChecker {
 
         if ( authentication == null || !authentication.isAuthenticated() ) {
 
-            LOG.warn( "Nicht authentifizierter Nutzer hat versucht eine Admin-Seite aufzurufen." );
             return false;
         }
 
-        final String rolleGesucht = "ROLE_" + ROLLE_ADMIN;
+         // Spring Security setzt Prefix "ROLE_" vorne an Rollennamen
 
         final Collection<? extends GrantedAuthority> authoritiesCollection =
-                authentication.getAuthorities();
-
+                                                                   authentication.getAuthorities();
         for ( GrantedAuthority ga: authoritiesCollection ) {
 
             final String authorityString =  ga.getAuthority();
-            if ( authorityString.equals( rolleGesucht ) ) {
+            if ( authorityString.equals( ROLLE_ADMIN_MIT_PREFIX ) ) {
 
                 return true;
             }
         }
-
-        LOG.warn( "Autor \"{}\" hat versucht ohne Admin-Rolle eine Admin-Seite aufzurufen.",
-                  authentication.getName() );
 
         return false;
     }

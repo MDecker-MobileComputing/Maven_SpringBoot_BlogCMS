@@ -2,6 +2,8 @@ package de.eldecker.dhbw.spring.blog.web;
 
 import static java.lang.String.format;
 
+import de.eldecker.dhbw.spring.blog.sicherheit.RollenChecker;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +37,22 @@ public class ThymeleafController {
 
 
     /** Repo-Bean für Zugriff auf Tabelle mit Artikeln. */
+    private final ArtikelRepo _artikelRepo;
+
+    /** Bean zum Überprüfen, ob Nutzer die Admin-Rolle hat. */
+    private final RollenChecker _rollenChecker;
+
+
+    /**
+     * Konstruktor für <i>Dependency Injection</i>.
+     */
     @Autowired
-    private ArtikelRepo _artikelRepo;
+    public ThymeleafController( ArtikelRepo artikelRepo,
+                                RollenChecker rollenChecker ) {
+
+        _artikelRepo   = artikelRepo;
+        _rollenChecker = rollenChecker;
+    }
 
 
     /**
@@ -140,6 +156,9 @@ public class ThymeleafController {
         if ( authentication != null && authentication.isAuthenticated() ) {
 
             model.addAttribute( "angemeldetAls", authentication.getName() );
+
+            final boolean istAdmin = _rollenChecker.istAdmin( authentication );
+            model.addAttribute( "istAdmin", istAdmin );
         }
 
         return "artikel-liste";

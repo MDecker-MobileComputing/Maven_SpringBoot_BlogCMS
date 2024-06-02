@@ -27,6 +27,8 @@
 
     <p th:if="${angemeldetAls != null}">
         <a href="/editor.html" target="_blank" >Neuen Artikel anlegen</a>
+        <br><br>
+        <a th:if="${istAdmin}" href="/admin/autorAnlegenFormular">Neuen Autor anlegen</a>
     </p>
 
 </body>
