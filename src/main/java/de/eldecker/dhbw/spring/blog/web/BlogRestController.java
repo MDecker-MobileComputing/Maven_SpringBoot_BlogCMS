@@ -33,6 +33,7 @@ import de.eldecker.dhbw.spring.blog.db.AutorEntity;
 import de.eldecker.dhbw.spring.blog.db.AutorenRepo;
 import de.eldecker.dhbw.spring.blog.model.ArtikelDTO;
 import de.eldecker.dhbw.spring.blog.model.TitelUndDeltaInhaltDTO;
+import de.eldecker.dhbw.spring.blog.sicherheit.HtmlReinigung;
 
 
 /**
@@ -47,6 +48,9 @@ public class BlogRestController {
     /** Bean für JSON-Serialisierung/Deserialisierung. */
     private final ObjectMapper _objectMapper;
 
+    /** Bean für Entfernung von JavaScript aus HTML-Content von Frontend.  */
+    private final HtmlReinigung _htmlReinigung;
+
     /** Repo-Bean für Zugriff auf Tabelle mit Artikeln. */
     private final ArtikelRepo _artikelRepo;
 
@@ -60,11 +64,13 @@ public class BlogRestController {
     @Autowired
     public BlogRestController( ArtikelRepo artikelRepo,
                                AutorenRepo autorenRepo,
-                               ObjectMapper objectMapper ) {
+                               ObjectMapper objectMapper,
+                               HtmlReinigung htmlReinigung ) {
 
-        _artikelRepo  = artikelRepo;
-        _autorenRepo  = autorenRepo;
-        _objectMapper = objectMapper;
+        _artikelRepo   = artikelRepo;
+        _autorenRepo   = autorenRepo;
+        _objectMapper  = objectMapper;
+        _htmlReinigung = htmlReinigung;
     }
 
 
@@ -180,9 +186,12 @@ public class BlogRestController {
                 return new ResponseEntity<>( "Titel von Artikel ist leer", BAD_REQUEST );
             }
 
+            final String htmlUnsicher = artikel.inhaltHTML();
+            final String htmlSicher   = _htmlReinigung.sanitize( htmlUnsicher );
+
             ArtikelEntity artikelEntity = new ArtikelEntity( artikel.titel().trim(),
                                                              artikel.inhaltDelta() ,
-                                                             artikel.inhaltHTML()  ,
+                                                             htmlSicher            ,
                                                              artikel.inhaltPlain() ,
                                                              autorEntity );
             artikelEntity = _artikelRepo.save( artikelEntity );
