@@ -39,6 +39,7 @@ public class BohnenFabrik {
                          .build();
     }
 
+    
     /**
      * Erzeugt entsprechend konfiguriertes {@link BCryptPasswordEncoder}-Objekt für die Verhashung
      * von Passwörtern:
@@ -57,6 +58,7 @@ public class BohnenFabrik {
      *
      * Beispielwert für einen gehashten String "g3h3im":
      * {@code $2b$12$kbseQ0b2vDSZSCpx8leMa.Q8dOxuwUaij5ApLWnka8ReQdvLEBnM6}
+     * <br>
      * Hierbei ist {@code kbseQ0b2vDSZSCpx8leMa} der Salt-Wert (128 Bit) in Base64-Kodierung
      * und {@code Q8dOxuwUaij5ApLWnka8ReQdvLEBnM6} der Hash-Wert in Base64-Kodierung.
      * <br><br>

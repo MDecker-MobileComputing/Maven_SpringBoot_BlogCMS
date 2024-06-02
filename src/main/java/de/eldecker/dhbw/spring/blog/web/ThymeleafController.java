@@ -20,7 +20,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import de.eldecker.dhbw.spring.blog.db.ArtikelEntity;
 import de.eldecker.dhbw.spring.blog.db.ArtikelRepo;
-import de.eldecker.dhbw.spring.blog.db.AutorEntity;
 import de.eldecker.dhbw.spring.blog.model.BlogException;
 
 
