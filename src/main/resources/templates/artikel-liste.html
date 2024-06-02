@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <div th:replace="FragmentAnmeldeInfo :: loginInfo(${angemeldetAls})"></div>
+    <div th:replace="~{FragmentAnmeldeInfo :: loginInfo(${angemeldetAls})}"></div>
 
     <h1 th:text="'Liste aller Artikel (' + ${#lists.size(artikel_liste)} + ')'"></h1>
 
@@ -16,7 +16,9 @@
         <a th:href="'/app/artikel/' + ${artikel.getId()}" th:text="${artikel.getTitel()}"></a>
         von
         <span th:text="${artikel.getAutor().getName()}"></span>
-        <span class="klein" th:text="' (' + ${#temporals.format(artikel.getZeitpunktAngelegt(), 'dd. MMMM yyyy, HH:mm')} + ' Uhr)'" ></span>
+        <span class="klein"
+              th:text="' (' + ${#temporals.format(artikel.getZeitpunktAngelegt(), 'dd. MMMM yyyy, HH:mm')} + ' Uhr)'" >
+        </span>
     </p>
     <br><br>
 
