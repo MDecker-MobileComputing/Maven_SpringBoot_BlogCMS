@@ -1,9 +1,12 @@
 package de.eldecker.dhbw.spring.blog.sicherheit;
 
-import org.jsoup.Jsoup;
-
-import org.springframework.stereotype.Component;
 import static org.jsoup.safety.Safelist.relaxed;
+
+
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
+import org.springframework.stereotype.Component;
+
 
 
 /**
@@ -13,6 +16,13 @@ import static org.jsoup.safety.Safelist.relaxed;
 @Component
 public class HtmlReinigung {
 
+    /** 
+     * Eigene Safelist basiered auf der Default-Safelist "relaxed", die zusätzlich
+     * CSS-Styling erlaubt (damit farbige Texte möglich sind).
+     */
+    private Safelist _safelist =  relaxed().addAttributes( ":all", "style" );
+
+    
     /**
      * Bereinigt den übergebenen HTML-String von potentiell gefährlichen
      * JavaScript-Inhalten. Es wird die nicht ganz so strenge
@@ -24,7 +34,7 @@ public class HtmlReinigung {
      */
     public String sanitize( String html ) {
 
-        return Jsoup.clean( html, relaxed() );
+        return Jsoup.clean( html, _safelist );
     }
 
 }
