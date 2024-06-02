@@ -125,7 +125,9 @@ function speichern() {
     const deltaObjekt = quillEditor.getContents();
     const deltaString = JSON.stringify( deltaObjekt );
     const htmlContent = quillEditor.root.innerHTML;
-    const plainString = quillEditor.getText();
+
+    let plainString = quillEditor.getText();
+    plainString     = quillEditor.getText().replace( /\n/g, " " );
 
     const payloadObjekt = {
                             artikelID  : artikelID  , // -1 für neuen Artikel
