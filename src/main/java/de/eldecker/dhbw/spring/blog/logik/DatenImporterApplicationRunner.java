@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import de.eldecker.dhbw.spring.blog.db.ArtikelEntity;
@@ -22,6 +23,15 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
 
     private final static Logger LOG = LoggerFactory.getLogger( DatenImporterApplicationRunner.class );
 
+    /**
+     * Objekt um Passwörter mit Bcrypt zu verhashen.
+     * <br><br>
+     *
+     * Alternative zur Erzeugung von Bcrypt-Hashes für Demo-User:
+     * Online-Dienste wie <a href="https://bcrypt.online/" target="_blank">bcrypt.online</a>.
+     */
+    private final static BCryptPasswordEncoder BCRYPT_ENCODER = new BCryptPasswordEncoder();
+
     /** Repo für Zugriff auf Tabelle mit Blog-Artikeln. */
     private final ArtikelRepo _artikelRepo;
 
@@ -34,8 +44,7 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
      */
     @Autowired
     public DatenImporterApplicationRunner( ArtikelRepo artikelRepo,
-                                           AutorenRepo autorRepo ) {
-
+                                           AutorenRepo autorRepo   ) {
         _artikelRepo = artikelRepo;
         _autorRepo   = autorRepo;
     }
@@ -56,9 +65,11 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
                       anzahlAlt );
         } else {
 
-            // Bcrypt-Values generated with: https://bcrypt.online/
-            final AutorEntity autor1 = new AutorEntity( "alice", "$2y$10$BjJB8WCzdmlm0E8RlltwtOP3eQSh7Ikonln0zjV2tLLkmH8de4y16" ); // "g3h3im"
-            final AutorEntity autor2 = new AutorEntity( "bob"  , "$2y$10$plpdk9XDdTTil6oRZxrQheOLB1PU7OV4w4J.h5mbF6zHyOJLkBRjO" ); // "s3cr3t"
+            final String passwort1 = BCRYPT_ENCODER.encode( "g3h3im" );
+            final String passwort2 = BCRYPT_ENCODER.encode( "s3cr3t" );
+
+            final AutorEntity autor1 = new AutorEntity( "alice", passwort1 );
+            final AutorEntity autor2 = new AutorEntity( "bob"  , passwort2 );
 
             final List<AutorEntity> autorenListe = List.of( autor1, autor2 );
             _autorRepo.saveAll( autorenListe );
