@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin für Blog-CMS: Neuen Autor anlegen</title>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../styles.css">
+</head>
+<body>
+
+    <h1>Admin für Blog-CMS: Neuen Autor anlegen</h1>
+
+    <form action="/admin/autorAnlegen" method="post">
+
+        <label class="fett" for="anmeldename">Anmeldename:</label>&nbsp;
+        <input type="text" id="anmeldename" name="anmeldename" style="width: 15rem">
+        <br><br>
+
+        <label class="fett" for="passwort1">Passwort:</label>&nbsp;
+        <input type="password" id="passwort1" name="passwort1">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        <label class="fett" for="passwort2">Passwort (Wiederholung):</label>&nbsp;
+        <input type="password" id="passwort2" name="passwort2">
+        <br><br>
+    
+        <input type="submit" value="Anlegen"     >
+        <input type="reset"  value="Zurücksetzen">
+
+      </form>
+      <br><br>
+
+      <p>Der Nutzername und das Passwort müssen mindestens 6 Zeichen lang sein.</p>
+</body>
+</html>

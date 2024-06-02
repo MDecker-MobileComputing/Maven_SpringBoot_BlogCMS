@@ -11,17 +11,36 @@ import org.springframework.stereotype.Service;
 
 import de.eldecker.dhbw.spring.blog.db.AutorEntity;
 import de.eldecker.dhbw.spring.blog.db.AutorenRepo;
+import de.eldecker.dhbw.spring.blog.web.AdminThymeleafController;
 
 
 /**
  * Implementierung Interface {@code UserDetailsService}, von der beim Anmeldevorgang
  * eines Autors ein Nutzerobjekt für einen bestimmten Nutzernamen abgefragt.
  */
+@SuppressWarnings("unused")
 @Service
 public class MeinUserDetailsService implements UserDetailsService {
 
-    /** Rolle für Autoren, erlaubt anlegen und ändern von Artikeln. */
-    public static final String ROLLE_AUTOR = "autor";
+    /** 
+     * Rolle für Autoren, erlaubt anlegen und ändern von Artikeln.<br>
+     * <i>Spring Security</i> fügt noch ein "ROLE_" vorne an (darf man
+     * nicht selber machen).  
+     */
+    public static final String ROLLE_AUTOR = "AUTOR";
+    
+    /** 
+     * Rolle für Autoren, die auch Admin sind, also anderen Autoren anlegen 
+     * können.<br>
+     * <i>Spring Security</i> fügt noch ein "ROLE_" vorne an (darf man
+     * nicht selber machen).    
+     * <br><br>
+     * 
+     * Siehe Methode {@link AdminThymeleafController#istAdmin(Authentication)}
+     * für Auswertung dieser Rolle.
+     */
+    public static final String ROLLE_ADMIN = "ADMIN";
+    
 
     /** Repo-Bean für Zugriff auf Datenbanktabelle mit Autoren. */
     private AutorenRepo _autorRepo;
@@ -64,10 +83,21 @@ public class MeinUserDetailsService implements UserDetailsService {
 
             final String passwort = autorEntity.getPasswort();
 
+            String[] rollenArray;
+            if (autorEntity.isAdmin()) {
+
+                rollenArray = new String[]{ ROLLE_AUTOR, ROLLE_ADMIN };
+
+            } else {
+
+                rollenArray = new String[]{ ROLLE_AUTOR };
+            }
+            
             final UserDetails userDetails = User.withUsername( nutzername )
-                                                .password( passwort ) // kein "{bcrypt}"-Prefix, weil wir eigene Bcrypt-Konfiguration verwenden
-                                                .roles( ROLLE_AUTOR )
-                                                .build();
+                    .password( passwort ) // kein "{bcrypt}"-Prefix, weil wir eigene Bcrypt-Konfiguration verwenden
+                    .roles( rollenArray )
+                    .build();
+            
             return userDetails;
         }
     }

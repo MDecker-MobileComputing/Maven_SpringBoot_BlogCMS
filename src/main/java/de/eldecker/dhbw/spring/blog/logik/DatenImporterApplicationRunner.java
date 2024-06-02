@@ -29,7 +29,7 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
     /** Repo für Zugriff auf Tabelle mit Autoren. */
     private final AutorenRepo _autorRepo;
 
-    /** Bean für Hashing von Passwort. */
+    /** Bean für Hashing von Passwort mit Algorithmus "Bcrypt". */
     private final BCryptPasswordEncoder _bcryptEncoder;
 
 
@@ -61,13 +61,15 @@ public class DatenImporterApplicationRunner implements ApplicationRunner {
                       anzahlAlt );
         } else {
 
+            final String passwort0 = _bcryptEncoder.encode( "abc123" );
             final String passwort1 = _bcryptEncoder.encode( "g3h3im" );
             final String passwort2 = _bcryptEncoder.encode( "s3cr3t" );
 
-            final AutorEntity autor1 = new AutorEntity( "alice", passwort1 );
-            final AutorEntity autor2 = new AutorEntity( "bob"  , passwort2 );
+            final AutorEntity autor0 = new AutorEntity( "chef" , passwort0, true  ); // Admin!
+            final AutorEntity autor1 = new AutorEntity( "alice", passwort1, false );
+            final AutorEntity autor2 = new AutorEntity( "bob"  , passwort2, false );
 
-            final List<AutorEntity> autorenListe = List.of( autor1, autor2 );
+            final List<AutorEntity> autorenListe = List.of( autor0, autor1, autor2 );
             _autorRepo.saveAll( autorenListe );
 
 

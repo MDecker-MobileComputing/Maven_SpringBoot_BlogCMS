@@ -39,6 +39,9 @@ public class AutorEntity {
      */
     private String passwort;
     
+    /** Wenn {@code true}, dann ist der Autor auch ein Admin und kann andere Nutzer-Konto anlegen. */
+    private boolean admin;
+    
     /** 
      * Liste der Artikel, die der Autor geschrieben hat.
      * Der Owner dieser Assoziation ist {@link ArtikelEntity}, siehe
@@ -55,6 +58,8 @@ public class AutorEntity {
         
         name     = "";
         passwort = "";
+        
+        admin = false;
     }
     
     
@@ -69,9 +74,30 @@ public class AutorEntity {
      
         this.name     = name;
         this.passwort = passwort;
+        
+        admin = false;
     }
 
+    /**
+     * Konstruktor um Autor mit Nutzername und Passwort anzulegen,
+     * mit {@code istAdmin} kann zusätzlich festgelegt werden, ob der
+     * Nutzer ein Admin sein soll oder nicht.
+     * 
+     * @param name Nutzername
+     * 
+     * @param passwort Passwort
+     * 
+     * @param istAdmin {@code true} gdw. der Autor ein Admin sein soll,
+     *                 also auch andere Autoren anlegen können soll.
+     */
+    public AutorEntity( String name, String passwort, boolean istAdmin ) {
+        
+        this( name, passwort );
+        
+        admin = istAdmin;
+    }
 
+    
     /**
      * Getter für ID/Primärschlüssel. Da die ID von JPA verwaltet wird,
      * gibt es keinen Setter für die ID.
@@ -129,6 +155,17 @@ public class AutorEntity {
     
     
     /**
+     * Getter für Abfrage, ob Autor ein Admin ist.
+     * 
+     * @return {@code true} gdw. wenn Autor ein Admin ist.
+     */
+    public boolean isAdmin() {
+        
+        return admin;
+    }
+    
+    
+    /**
      * Getter für Liste der Artikel, die der Autor geschrieben hat
      * und deshalb auch ändern darf.
      * 
@@ -168,7 +205,7 @@ public class AutorEntity {
     @Override
     public int hashCode() {
 
-        return Objects.hash( name, passwort, artikel );
+        return Objects.hash( name, passwort, artikel, admin );
     }
     
     
@@ -189,7 +226,8 @@ public class AutorEntity {
 
             return Objects.equals( name    , andererAutor.name     ) && 
                    Objects.equals( passwort, andererAutor.passwort ) &&
-                   Objects.equals( artikel , andererAutor.artikel  );
+                   Objects.equals( artikel , andererAutor.artikel  ) &&
+                   admin == andererAutor.admin;
             
         } else {
             
