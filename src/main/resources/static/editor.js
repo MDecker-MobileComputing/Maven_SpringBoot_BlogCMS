@@ -50,7 +50,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 [{ "list": "ordered"}, { "list": "bullet" }],
                 [{ "script": "sub"}, { "script": "super" }],
                 [{ "color": [] }],
-                [{ "align": [] }],
                 ["link"], // Hyperlinks einfügen
                 ["clean"]
             ]

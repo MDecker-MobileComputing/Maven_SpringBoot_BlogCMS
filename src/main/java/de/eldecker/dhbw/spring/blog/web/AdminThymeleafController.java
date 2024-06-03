@@ -2,6 +2,8 @@ package de.eldecker.dhbw.spring.blog.web;
 
 import static java.lang.String.format;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -125,10 +127,17 @@ public class AdminThymeleafController {
         }
 
         anmeldename = anmeldename.trim();
-        if ( anmeldename.length() < 6 ) {
+        if ( anmeldename.length() < 3 ) {
 
-            model.addAttribute( "ergebnis_text", "Anmeldename hat weniger als 6 Zeichen." );
+            model.addAttribute( "ergebnis_text", "Anmeldename hat weniger als 3 Zeichen." );
             return "autor-anlegen-ergebnis";
+        }
+        
+        final Optional<AutorEntity> autorOptional = _autorenRepo.findByName( anmeldename );
+        if ( autorOptional.isPresent() ) {
+            
+            model.addAttribute( "ergebnis_text", "Es gibt schon einen Nutzer diesem Namen." );
+            return "autor-anlegen-ergebnis";            
         }
 
         passwort1 = passwort1.trim();
