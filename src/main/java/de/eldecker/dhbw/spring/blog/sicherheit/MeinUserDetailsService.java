@@ -93,10 +93,9 @@ public class MeinUserDetailsService implements UserDetailsService {
             }
             
             final UserDetails userDetails = User.withUsername( nutzername )
-                    .password( passwort ) // kein "{bcrypt}"-Prefix, weil wir eigene Bcrypt-Konfiguration verwenden
-                    .roles( rollenArray )
-                    .build();
-            
+                                                .password( passwort ) // kein "{bcrypt}"-Prefix, weil wir eigene Bcrypt-Konfiguration verwenden
+                                                .roles( rollenArray )
+                                                .build();            
             return userDetails;
         }
     }
