@@ -18,7 +18,6 @@ import de.eldecker.dhbw.spring.blog.web.AdminThymeleafController;
  * Implementierung Interface {@code UserDetailsService}, von der beim Anmeldevorgang
  * eines Autors ein Nutzerobjekt für einen bestimmten Nutzernamen abgefragt.
  */
-@SuppressWarnings("unused")
 @Service
 public class MeinUserDetailsService implements UserDetailsService {
 
