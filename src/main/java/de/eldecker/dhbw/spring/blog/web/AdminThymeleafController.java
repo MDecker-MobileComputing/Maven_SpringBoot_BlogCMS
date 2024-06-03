@@ -111,11 +111,11 @@ public class AdminThymeleafController {
      *         zurückgegeben.
      */
     @PostMapping( "/autorAnlegen" )
-    public String autorAnlegenErgebnis( Authentication authentication,
-                                        Model model,
-                                        @RequestParam(value = "anmeldename", required = true) String anmeldename,
-                                        @RequestParam(value = "passwort1"  , required = true) String passwort1  ,
-                                        @RequestParam(value = "passwort2"  , required = true) String passwort2  ) {
+    public String autorAnlegen( Authentication authentication,
+                                Model model,
+                                @RequestParam(value = "anmeldename", required = true) String anmeldename,
+                                @RequestParam(value = "passwort1"  , required = true) String passwort1  ,
+                                @RequestParam(value = "passwort2"  , required = true) String passwort2  ) {
 
         if ( _rollenChecker.istAdmin( authentication ) == false ) {
 
