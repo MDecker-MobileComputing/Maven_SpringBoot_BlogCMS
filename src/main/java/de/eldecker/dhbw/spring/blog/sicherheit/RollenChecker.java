@@ -18,7 +18,7 @@ public class RollenChecker {
 
     /**
      * Name der Admin-Rolle mit Prefix "ROLE_" (wird von <i>Spring Security</i> hinzugefügt,
-     * können wir nicht selbst hinzufügen.
+     * können wir nicht selbst hinzufügen).
      */
     public static final String ROLLE_ADMIN_MIT_PREFIX = "ROLE_" + ROLLE_ADMIN;
 
@@ -40,8 +40,6 @@ public class RollenChecker {
 
             return false;
         }
-
-         // Spring Security setzt Prefix "ROLE_" vorne an Rollennamen
 
         final Collection<? extends GrantedAuthority> authoritiesCollection =
                                                                    authentication.getAuthorities();
