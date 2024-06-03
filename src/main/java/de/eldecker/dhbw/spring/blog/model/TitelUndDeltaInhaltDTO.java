@@ -1,5 +1,6 @@
 package de.eldecker.dhbw.spring.blog.model;
 
+
 /**
  * DTO (Data Transfer Objekt) für JSON-Payload von Backend zu Browser.
  * Wird für REST-Endpunkt benötigt, bei dem das Frontend einen zu ändernden

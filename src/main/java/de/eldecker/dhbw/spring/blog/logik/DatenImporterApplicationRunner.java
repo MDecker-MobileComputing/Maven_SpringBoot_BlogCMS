@@ -15,6 +15,7 @@ import de.eldecker.dhbw.spring.blog.db.ArtikelRepo;
 import de.eldecker.dhbw.spring.blog.db.AutorEntity;
 import de.eldecker.dhbw.spring.blog.db.AutorenRepo;
 
+
 /**
  * Bean um bei Bedarf Demo-Content unmittelbar nach Start der Anwendung zu importieren.
  */

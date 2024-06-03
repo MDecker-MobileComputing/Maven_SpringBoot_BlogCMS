@@ -8,7 +8,6 @@ import org.jsoup.safety.Safelist;
 import org.springframework.stereotype.Component;
 
 
-
 /**
  * Bean-Klasse um die über REST-Endpunkt empfangenen HTML-Inhalte zu bereinigen,
  * vor allem um evtl. eingebauten JavaScript-Code zu entfernen.

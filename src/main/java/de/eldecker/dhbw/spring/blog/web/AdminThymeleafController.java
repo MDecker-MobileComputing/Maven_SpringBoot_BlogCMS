@@ -2,14 +2,9 @@ package de.eldecker.dhbw.spring.blog.web;
 
 import static java.lang.String.format;
 
-import static de.eldecker.dhbw.spring.blog.sicherheit.MeinUserDetailsService.ROLLE_ADMIN;
-
-import java.util.Collection;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

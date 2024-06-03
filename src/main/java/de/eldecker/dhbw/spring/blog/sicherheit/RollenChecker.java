@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
+
 /**
  * Diese Bean enthält Methoden, mit denen in verschiedenen Controller-Klassen
  * überprüft werden kann, ob der aktuelle Nutzer angemeldet ist und die
