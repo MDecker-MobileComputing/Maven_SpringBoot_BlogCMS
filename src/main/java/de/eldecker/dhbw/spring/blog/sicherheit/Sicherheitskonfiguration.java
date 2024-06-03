@@ -20,10 +20,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class Sicherheitskonfiguration {
 
     /** Array mit Pfaden, auf die auch ohne Authentifizierung zugegriffen werden kann. */
-    private final static String[] OEFFENTLICHE_PFADE_ARRAY = { "/index.html"           ,
-                                                               "/styles.css"           ,
-                                                               "/h2-console/**"        ,
-                                                               "/app/**"               ,
+    private final static String[] OEFFENTLICHE_PFADE_ARRAY = { "/index.html"   ,
+                                                               "/styles.css"   ,
+                                                               "/h2-console/**",
+                                                               "/app/**"       ,
                                                                "/public/**"
                                                              };
 
