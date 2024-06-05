@@ -39,9 +39,9 @@ public interface ArtikelRepo extends JpaRepository<ArtikelEntity, Long> {
      *         sortiert nach absteigendem Erzeugungszeitpunkt, also neueste Artikel
      *         zuerst.
      */
-    @Query( "SELECT a FROM ArtikelEntity a " +
-            "WHERE lower(a.titel) LIKE lower(concat('%', :suchbegriff, '%')) OR " +
-                  "lower(cast(a.inhaltPlain as string)) LIKE lower(concat('%', :suchbegriff, '%'))" +
+    @Query( "SELECT a FROM ArtikelEntity a "                                                         +
+            "WHERE lower(a.titel) LIKE lower(concat('%', :suchbegriff, '%')) OR "                    +
+                  "lower(cast(a.inhaltPlain as string)) LIKE lower(concat('%', :suchbegriff, '%')) " +
                   "ORDER BY a.zeitpunktAngelegt DESC" )
     List<ArtikelEntity> holeArtikelTextsuche( @Param("suchbegriff") String suchbegriff );
 
