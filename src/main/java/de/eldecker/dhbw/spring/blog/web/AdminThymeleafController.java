@@ -161,7 +161,6 @@ public class AdminThymeleafController {
             return "autor-anlegen-ergebnis";
         }
 
-
         final String passwortHash = _bcryptEncoder.encode( passwort1 );
 
         AutorEntity autorEntityNeu = new AutorEntity( anmeldename, passwortHash, false );
