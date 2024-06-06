@@ -132,12 +132,12 @@ public class AdminThymeleafController {
             model.addAttribute( "ergebnis_text", "Anmeldename hat weniger als 3 Zeichen." );
             return "autor-anlegen-ergebnis";
         }
-        
+
         final Optional<AutorEntity> autorOptional = _autorenRepo.findByName( anmeldename );
         if ( autorOptional.isPresent() ) {
-            
+
             model.addAttribute( "ergebnis_text", "Es gibt schon einen Nutzer diesem Namen." );
-            return "autor-anlegen-ergebnis";            
+            return "autor-anlegen-ergebnis";
         }
 
         passwort1 = passwort1.trim();
@@ -170,7 +170,6 @@ public class AdminThymeleafController {
 
         final String erfolgsText = format( "Autor \"%s\" erfolgreich angelegt mit ID=%d.",
                                            anmeldename, autorEntityNeu.getId() );
-
         LOG.info( erfolgsText );
 
         model.addAttribute( "ergebnis_text", erfolgsText );

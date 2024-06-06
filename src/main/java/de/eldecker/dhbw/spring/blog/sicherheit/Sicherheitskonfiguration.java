@@ -47,7 +47,7 @@ public class Sicherheitskonfiguration {
                    .formLogin( formLogin -> formLogin.defaultSuccessUrl( "/app/artikel/liste", true ) ) // true=alwaysUse
                    .logout(logout -> logout
                            .logoutUrl( "/abmelden" )
-                           .logoutSuccessUrl("/public/autor-abgemeldet.html")
+                           .logoutSuccessUrl("/public/autor-abgemeldet.html" )
                            .invalidateHttpSession( true )
                            .deleteCookies( "JSESSIONID" )
                           )

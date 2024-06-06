@@ -122,8 +122,8 @@ public class BlogRestController {
         }
 
         final TitelUndDeltaInhaltDTO dto =
-                new TitelUndDeltaInhaltDTO( artikelEntity.getTitel(),
-                                            artikelEntity.getInhaltDelta() );
+                        new TitelUndDeltaInhaltDTO( artikelEntity.getTitel(),
+                                                    artikelEntity.getInhaltDelta() );
         try {
 
             final String json = _objectMapper.writeValueAsString( dto );

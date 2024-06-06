@@ -90,7 +90,6 @@ public class ThymeleafController {
 
         final String fehlerText = format( "Ungültiger Wert für Parameter \"%s\" übergeben: \"%s\"",
                                           ex.getName(), ex.getValue() );
-
         LOG.error( fehlerText );
 
         model.addAttribute( "fehlertext", fehlerText );
