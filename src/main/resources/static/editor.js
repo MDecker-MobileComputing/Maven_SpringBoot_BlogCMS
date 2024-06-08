@@ -17,7 +17,7 @@ let artikelID = -1;
  */
 function holeArtikelID() {
 
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams( window.location.search );
     const artikelIdString = urlParams.get( "artikelID" );
 
     if ( artikelIdString === null ) {
@@ -40,7 +40,7 @@ function holeArtikelID() {
 /**
  * Initialisiert den QuillJS-Editor, sobald die Seite geladen wurde.
  */
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener( "DOMContentLoaded" , function() {
 
     quillEditor = new Quill( "#quilljs_editor", {
         modules: {
