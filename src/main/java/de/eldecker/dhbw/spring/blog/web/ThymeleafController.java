@@ -115,7 +115,7 @@ public class ThymeleafController {
     public String artikelAnzeigen( Authentication authentication,
                                    Model model,
                                    @PathVariable("artikelID") long artikelID )
-        throws BlogException {
+                          throws BlogException {
 
         final Optional<ArtikelEntity> artikelOptional = _artikelRepo.findById( artikelID );
         if ( artikelOptional.isEmpty() ) {
