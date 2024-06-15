@@ -59,6 +59,7 @@ public class BlogRestController {
     private final AutorenRepo _autorenRepo;
 
     /** Wird für Rechnerübung benötigt. */
+    @SuppressWarnings("unused")
     private final RollenChecker _rollenChecker;
 
 
