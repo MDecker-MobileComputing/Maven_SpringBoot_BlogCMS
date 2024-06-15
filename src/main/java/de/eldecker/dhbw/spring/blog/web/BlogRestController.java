@@ -34,6 +34,7 @@ import de.eldecker.dhbw.spring.blog.db.AutorenRepo;
 import de.eldecker.dhbw.spring.blog.model.ArtikelDTO;
 import de.eldecker.dhbw.spring.blog.model.TitelUndDeltaInhaltDTO;
 import de.eldecker.dhbw.spring.blog.sicherheit.HtmlReinigung;
+import de.eldecker.dhbw.spring.blog.sicherheit.RollenChecker;
 
 
 /**
@@ -57,6 +58,9 @@ public class BlogRestController {
     /** Repo-Bean für Zugriff auf Tabelle mit Autoren. */
     private final AutorenRepo _autorenRepo;
 
+    /** Wird für Rechnerübung benötigt. */
+    private final RollenChecker _rollenChecker;
+
 
     /**
      * Konstruktor für <i>Dependency Injection</i>.
@@ -65,12 +69,14 @@ public class BlogRestController {
     public BlogRestController( ArtikelRepo artikelRepo,
                                AutorenRepo autorenRepo,
                                ObjectMapper objectMapper,
-                               HtmlReinigung htmlReinigung ) {
+                               HtmlReinigung htmlReinigung,
+                               RollenChecker rollenChecker ) {
 
         _artikelRepo   = artikelRepo;
         _autorenRepo   = autorenRepo;
         _objectMapper  = objectMapper;
         _htmlReinigung = htmlReinigung;
+        _rollenChecker = rollenChecker;
     }
 
 
