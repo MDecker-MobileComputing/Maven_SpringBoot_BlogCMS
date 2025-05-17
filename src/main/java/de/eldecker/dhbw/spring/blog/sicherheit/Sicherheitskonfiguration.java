@@ -74,4 +74,5 @@ public class Sicherheitskonfiguration {
 
         return ergebnisArray;
     }
+ 
 }

@@ -42,4 +42,5 @@ public class StatischerWebContentKonfiguration {
         
         return filterBean;
     }
+    
 }

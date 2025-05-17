@@ -132,6 +132,7 @@ public class ArtikelEntity {
         autor = null;
     }
 
+    
     /**
      * Konstruktor um Werte für die drei String-Attribute und den Autor zu setzen.
      * <br><br>

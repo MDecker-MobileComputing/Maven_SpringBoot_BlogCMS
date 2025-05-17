@@ -78,6 +78,7 @@ public class AutorEntity {
         admin = false;
     }
 
+    
     /**
      * Konstruktor um Autor mit Nutzername und Passwort anzulegen,
      * mit {@code istAdmin} kann zusätzlich festgelegt werden, ob der
