@@ -23,7 +23,7 @@ public interface ArtikelRepo extends JpaRepository<ArtikelEntity, Long> {
     List<ArtikelEntity> findAllByOrderByZeitpunktAngelegtDesc();
 
 
-   /**
+    /**
      * Textesuche nach Artikeln anhand Inhalt und Titel.
      * <br><br>
      *
