@@ -1,8 +1,7 @@
 package de.eldecker.dhbw.spring.blog.konfig;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
-import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
-import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
+import static tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+import static tools.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 
 import static org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.BCryptVersion.$2B;
 
@@ -12,8 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 
 /**
@@ -34,7 +33,6 @@ public class BohnenFabrik {
 
         return JsonMapper.builder()
                          .disable( FAIL_ON_UNKNOWN_PROPERTIES ) // Ignoriert unbekannte JSON-Felder beim Deserialisieren
-                         .disable( WRITE_DATES_AS_TIMESTAMPS  ) // Schreibt Datum und Zeit im ISO-8601-Format
                          .enable(  INDENT_OUTPUT              ) // Erzeugtes JSON mit Einrückungen, damit gut für Menschen lesbar
                          .build();
     }

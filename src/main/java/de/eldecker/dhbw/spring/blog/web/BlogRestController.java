@@ -24,8 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 import de.eldecker.dhbw.spring.blog.db.ArtikelEntity;
 import de.eldecker.dhbw.spring.blog.db.ArtikelRepo;
@@ -35,6 +34,8 @@ import de.eldecker.dhbw.spring.blog.model.ArtikelDTO;
 import de.eldecker.dhbw.spring.blog.model.TitelUndDeltaInhaltDTO;
 import de.eldecker.dhbw.spring.blog.sicherheit.HtmlReinigung;
 import de.eldecker.dhbw.spring.blog.sicherheit.RollenChecker;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 
 /**
@@ -137,7 +138,7 @@ public class BlogRestController {
 
             return new ResponseEntity<>( json, OK);
         }
-        catch ( JsonProcessingException ex ) {
+        catch ( JacksonException ex ) {
 
             LOG.error( "Fehler bei Serialisierung von DTO nach JSON: " + ex.getMessage() );
             return new ResponseEntity<>( "Interner Fehler bei Bereitstellung von Artikel im JSON-Format.",
@@ -210,7 +211,7 @@ public class BlogRestController {
 
             return new ResponseEntity<>( forwardToPfad, CREATED );
         }
-        catch ( JsonProcessingException ex ) {
+        catch ( JacksonException ex ) {
 
             final String fehlerText = "JSON mit neuen Artikel kann nicht deserialisiert werden. " +
                                       ex.getMessage();
@@ -295,7 +296,7 @@ public class BlogRestController {
 
             return new ResponseEntity<>( forwardToPfad, OK );
         }
-        catch ( JsonProcessingException ex ) {
+        catch ( JacksonException ex ) {
 
             final String fehlerText = "JSON mit geändertem Artikel kann nicht deserialisiert werden. " +
                                       ex.getMessage();

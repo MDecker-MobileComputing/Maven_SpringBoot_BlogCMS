@@ -1,13 +1,12 @@
 package de.eldecker.dhbw.spring.blog.sicherheit;
 
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
 
 
 /**
@@ -39,10 +38,8 @@ public class Sicherheitskonfiguration {
     @Bean
     public SecurityFilterChain httpKonfiguration( HttpSecurity http ) throws Exception {
 
-        final AntPathRequestMatcher[] oeffentlichPfadMatcherArray = getMatcherFuerOeffentlichePfade();
-
         return http.csrf( (csrf) -> csrf.disable() )
-                   .authorizeHttpRequests( auth -> auth.requestMatchers( oeffentlichPfadMatcherArray ).permitAll()
+                   .authorizeHttpRequests( auth -> auth.requestMatchers( OEFFENTLICHE_PFADE_ARRAY ).permitAll()
                                                        .anyRequest().authenticated() )
                    .formLogin( formLogin -> formLogin.defaultSuccessUrl( "/app/artikel/liste", true ) ) // true=alwaysUse
                    .logout(logout -> logout
@@ -53,26 +50,5 @@ public class Sicherheitskonfiguration {
                           )
                    .headers( headers -> headers.disable() ) // damit H2-Konsole funktioniert
                    .build();
-    }
-
-
-    /**
-     * Erzeugt für öffentliche Pfade aus String-Array in einen Array von
-     * {@code AntPathRequestMatcher}-Objekten.
-     *
-     * @return Array mit Matcher-Objekten für die öffentliche Pfade
-     *         (Pfade, die ohne Authentifizierung aufgerufen werden können)
-     */
-    private static AntPathRequestMatcher[] getMatcherFuerOeffentlichePfade() {
-
-        final int anzahlOeffentlichePfade = OEFFENTLICHE_PFADE_ARRAY.length;
-        final AntPathRequestMatcher[] ergebnisArray = new AntPathRequestMatcher[ anzahlOeffentlichePfade ];
-        for ( int i = 0; i < anzahlOeffentlichePfade; i++ ) {
-
-            ergebnisArray[ i ] = antMatcher( OEFFENTLICHE_PFADE_ARRAY[i] );
-        }
-
-        return ergebnisArray;
-    }
- 
+    } 
 }
